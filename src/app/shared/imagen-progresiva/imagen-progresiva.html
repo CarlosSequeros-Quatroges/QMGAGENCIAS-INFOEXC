@@ -1,0 +1,19 @@
+<div class="ip-wrap" [class.cargada]="cargada()" [class.fallida]="fallida()">
+  @if (placeholder()) {
+    <div class="ip-lqip" [style.background-image]="'url(' + placeholder() + ')'"></div>
+  } @else {
+    <div class="ip-lqip ip-lqip--vacio"></div>
+  }
+
+  <img
+    #img
+    [ngSrc]="src()"
+    [alt]="alt()"
+    fill
+    [sizes]="sizes()"
+    [priority]="priority()"
+    class="ip-img"
+    (load)="onCargada()"
+    (error)="onError()"
+  />
+</div>

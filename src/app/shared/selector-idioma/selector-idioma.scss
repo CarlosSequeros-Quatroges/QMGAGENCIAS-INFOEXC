@@ -1,0 +1,38 @@
+.idiomas {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.idioma {
+  all: unset;
+  cursor: pointer;
+  line-height: 0;
+  border-radius: 3px;
+  opacity: 0.5;
+  filter: grayscale(0.6);
+  transition:
+    opacity 0.15s ease,
+    filter 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover {
+    opacity: 0.85;
+  }
+
+  &.activo {
+    opacity: 1;
+    filter: none;
+    transform: scale(1.08);
+    outline: 2px solid var(--color-acento);
+    outline-offset: 1px;
+  }
+
+  img {
+    display: block;
+    width: 26px;
+    height: 18px;
+    border-radius: 2px;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+  }
+}

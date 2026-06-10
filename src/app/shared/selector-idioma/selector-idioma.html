@@ -1,0 +1,14 @@
+<div class="idiomas">
+  @for (idioma of idiomas; track idioma.codigo) {
+    <button
+      type="button"
+      class="idioma"
+      [class.activo]="idioma.codigo === actual()"
+      [attr.aria-label]="idioma.nombre"
+      [attr.aria-pressed]="idioma.codigo === actual()"
+      (click)="cambiar(idioma.codigo)"
+    >
+      <img [src]="idioma.bandera" [alt]="idioma.nombre" width="26" height="18" loading="lazy" />
+    </button>
+  }
+</div>

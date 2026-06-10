@@ -1,0 +1,28 @@
+<div class="carrusel">
+  <div #pista class="carrusel-pista" (scroll)="onScroll()">
+    @for (slide of slides(); track slide.full; let i = $index) {
+      <div class="carrusel-slide">
+        <app-imagen-progresiva
+          [src]="slide.full"
+          [placeholder]="slide.low"
+          [alt]="alt()"
+          [priority]="i === 0"
+          sizes="100vw"
+        />
+      </div>
+    }
+  </div>
+
+  @if (imagenes().length > 1) {
+    <div class="carrusel-puntos">
+      @for (img of imagenes(); track img; let i = $index) {
+        <button
+          class="punto"
+          [class.activo]="i === indiceActivo()"
+          [attr.aria-label]="'Ir a la foto ' + (i + 1)"
+          (click)="irA(i)"
+        ></button>
+      }
+    </div>
+  }
+</div>

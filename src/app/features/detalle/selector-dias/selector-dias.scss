@@ -1,0 +1,60 @@
+.selector-leyenda {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0 0 0.75rem;
+}
+
+.selector-pista {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+}
+
+.dia {
+  all: unset;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 60px;
+  border-radius: 10px;
+  background: #f2f2f2;
+  color: #bbb;
+  cursor: not-allowed;
+  user-select: none;
+  transition:
+    background 0.15s ease,
+    transform 0.1s ease;
+
+  &.disponible {
+    background: #fff;
+    color: #1a1a1a;
+    border: 1px solid var(--color-acento);
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.94);
+    }
+  }
+
+  &.activo {
+    background: var(--color-acento);
+    color: #fff;
+    border-color: var(--color-acento);
+  }
+}
+
+.dia-semana {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.dia-mes {
+  font-size: 1.1rem;
+  font-weight: 700;
+}

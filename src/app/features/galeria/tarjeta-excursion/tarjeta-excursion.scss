@@ -1,0 +1,75 @@
+.tarjeta {
+  all: unset;
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.tarjeta-imagen {
+  position: relative; // requerido por NgOptimizedImage con [fill]
+  height: 180px;
+  background: #e8e8e8; // placeholder gris mientras descarga la imagen
+}
+
+.tarjeta-imagen img {
+  object-fit: cover;
+}
+
+.tarjeta-contenido {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tarjeta-titulo {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  color: #1a1a1a;
+}
+
+.tarjeta-entradilla {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 0;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+.tarjeta-footer {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  margin-top: 0.25rem;
+}
+
+.precio-desde {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.precio-valor {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-acento);
+}

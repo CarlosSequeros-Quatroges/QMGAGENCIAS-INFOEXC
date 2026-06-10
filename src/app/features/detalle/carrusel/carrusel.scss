@@ -1,0 +1,55 @@
+.carrusel {
+  position: relative;
+}
+
+.carrusel-pista {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none; // Firefox
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none; // Chrome/Safari
+  }
+}
+
+.carrusel-slide {
+  position: relative; // requerido por NgOptimizedImage con [fill]
+  flex: 0 0 100%;
+  aspect-ratio: 16 / 10;
+  scroll-snap-align: start;
+  background: #e8e8e8; // placeholder mientras carga
+
+  img {
+    object-fit: cover;
+  }
+}
+
+.carrusel-puntos {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.punto {
+  all: unset;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+
+  &.activo {
+    background: #fff;
+    transform: scale(1.25);
+  }
+}

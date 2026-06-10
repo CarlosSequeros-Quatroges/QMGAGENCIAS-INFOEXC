@@ -1,0 +1,63 @@
+.ip-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #e8e8e8; // se ve a través del pulso de la miniatura
+}
+
+// Miniatura diminuta escalada y pixelada (LQIP)
+.ip-lqip {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  image-rendering: pixelated; // pixelado nítido, no difuminado
+  transform: scale(1.04); // oculta el borde del escalado
+  animation: ip-pulso 1.2s ease-in-out infinite;
+
+  &--vacio {
+    background: #e0e0e0;
+  }
+}
+
+// Imagen real: oculta hasta que carga, luego crossfade
+.ip-img {
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+.ip-wrap.cargada {
+  .ip-img {
+    opacity: 1;
+  }
+
+  .ip-lqip {
+    animation: none;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+  }
+}
+
+// Si la imagen real falla, dejamos la miniatura fija (sin pulso) como fallback
+.ip-wrap.fallida .ip-lqip {
+  animation: none;
+}
+
+@keyframes ip-pulso {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+// Respeta usuarios con movimiento reducido
+@media (prefers-reduced-motion: reduce) {
+  .ip-lqip {
+    animation: none;
+  }
+}

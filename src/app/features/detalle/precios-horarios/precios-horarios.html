@@ -1,0 +1,26 @@
+@if (!fecha()) {
+  <p class="ph-vacio">{{ i18n.t('precios.seleccionaDia') }}</p>
+} @else if (disponibilidad.isLoading()) {
+  <div class="ph-skeleton">
+    @for (i of [1, 2, 3]; track i) {
+      <div class="ph-fila-skeleton shimmer"></div>
+    }
+  </div>
+} @else if (disponibilidad.error()) {
+  <p class="ph-error">{{ i18n.t('precios.error') }}</p>
+} @else if (disponibilidad.value(); as disp) {
+  <ul class="ph-lista">
+    @for (h of disp.horarios; track h.hora) {
+      <li class="ph-fila">
+        <span class="ph-hora">{{ h.hora }}</span>
+        <span class="ph-precios">
+          <span class="ph-precio"><small>{{ i18n.t('precios.adulto') }}</small> {{ h.precioAdulto }}€</span>
+          <span class="ph-precio"><small>{{ i18n.t('precios.nino') }}</small> {{ h.precioNino }}€</span>
+        </span>
+        <span class="ph-plazas" [class.pocas]="h.plazasLibres <= 5">
+          {{ h.plazasLibres }} {{ i18n.t('precios.plazas') }}
+        </span>
+      </li>
+    }
+  </ul>
+}

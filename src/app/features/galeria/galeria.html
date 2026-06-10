@@ -1,0 +1,26 @@
+<div class="galeria-page">
+  @if (excursiones.isLoading()) {
+    <div class="galeria-skeleton">
+      @for (item of [1, 2, 3]; track item) {
+        <div class="skeleton-card">
+          <div class="skeleton-img shimmer"></div>
+          <div class="skeleton-texto">
+            <div class="skeleton-linea shimmer"></div>
+            <div class="skeleton-linea corta shimmer"></div>
+            <div class="skeleton-precio shimmer"></div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (excursiones.error()) {
+    <div class="galeria-error">
+      <p>{{ i18n.t('galeria.error') }}</p>
+    </div>
+  } @else {
+    <div class="galeria-grid">
+      @for (excursion of excursiones.value(); track excursion.id) {
+        <app-tarjeta-excursion [excursion]="excursion" (verDetalle)="verDetalle($event)" />
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,22 @@
+<div class="selector">
+  @if (diasSemanaOperativos().length) {
+    <p class="selector-leyenda">
+      {{ i18n.t('selector.disponible') }} <strong>{{ diasSemanaOperativos().join(', ') }}</strong>
+    </p>
+  }
+
+  <div class="selector-pista">
+    @for (dia of dias(); track dia.fecha) {
+      <button
+        class="dia"
+        [class.disponible]="dia.disponible"
+        [class.activo]="dia.fecha === fechaSeleccionada()"
+        [disabled]="!dia.disponible"
+        (click)="seleccionar(dia)"
+      >
+        <span class="dia-semana">{{ dia.diaSemana }}</span>
+        <span class="dia-mes">{{ dia.diaMes }}</span>
+      </button>
+    }
+  </div>
+</div>

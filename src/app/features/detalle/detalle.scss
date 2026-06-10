@@ -1,0 +1,104 @@
+.detalle-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding-bottom: 2rem;
+}
+
+.volver {
+  display: inline-block;
+  padding: 1rem;
+  color: var(--color-acento);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.detalle-contenido {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.detalle-titulo {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1a1a1a;
+}
+
+.detalle-entradilla {
+  font-size: 1.05rem;
+  color: #444;
+  margin: 0;
+  font-weight: 500;
+}
+
+.detalle-texto {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.detalle-subtitulo {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 1.25rem 0 0.75rem;
+  color: #1a1a1a;
+}
+
+.detalle-disponibilidad-placeholder {
+  min-height: 200px;
+}
+
+.detalle-error {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #888;
+}
+
+// Skeleton de carga inicial
+.detalle-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0 1rem;
+}
+
+.sk-imagen {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 12px;
+  background: #ececec;
+}
+
+.sk-linea {
+  height: 16px;
+  border-radius: 6px;
+  background: #ececec;
+
+  &.larga {
+    width: 80%;
+    height: 24px;
+  }
+
+  &.corta {
+    width: 50%;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.shimmer {
+  animation: shimmer 1.4s ease-in-out infinite;
+}

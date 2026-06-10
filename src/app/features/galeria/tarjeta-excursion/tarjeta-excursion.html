@@ -1,0 +1,18 @@
+<button class="tarjeta" (click)="onTap()">
+  <div class="tarjeta-imagen">
+    <app-imagen-progresiva
+      [src]="excursion().imagenThumb"
+      [placeholder]="placeholder()"
+      [alt]="excursion().titulo"
+      sizes="(max-width: 600px) 100vw, 33vw"
+    />
+  </div>
+  <div class="tarjeta-contenido">
+    <h2 class="tarjeta-titulo">{{ excursion().titulo }}</h2>
+    <p class="tarjeta-entradilla">{{ excursion().entradilla }}</p>
+    <div class="tarjeta-footer">
+      <span class="precio-desde">{{ i18n.t('tarjeta.desde') }}</span>
+      <span class="precio-valor">{{ excursion().precioDesde }}€</span>
+    </div>
+  </div>
+</button>
