@@ -35,13 +35,13 @@ function excursionConDisponibilidad(e: Excursion): Excursion {
 export const mockInterceptor: HttpInterceptorFn = (req, next) => {
   if (req.method !== 'GET') return next(req);
 
-  // Ruta sin query string (p. ej. quita ?lang=es).
-  const path = req.url.split('?')[0];
+  // Las rutas usan query params: separamos ruta de la query string.
+  const [path, query = ''] = req.url.split('?');
+  const params = new URLSearchParams(query);
 
-  // GET /:empresa/info (datos de marca de la empresa)
+  // GET /info?empresa=001 (datos de marca de la empresa)
   if (path.endsWith('/info')) {
-    const segmentos = path.split('/');
-    const codigo = segmentos[segmentos.length - 2];
+    const codigo = params.get('empresa') ?? '';
     const body: EmpresaModel = {
       codigo,
       nombre: 'Fuerte Itaka',
@@ -51,20 +51,16 @@ export const mockInterceptor: HttpInterceptorFn = (req, next) => {
     return of(new HttpResponse({ status: 200, body }));
   }
 
-  // GET /:empresa/excursiones  y  /:empresa/excursiones/:id
-  if (path.includes('/excursiones') && !path.includes('disponibilidad')) {
-    const segmentos = path.split('/');
-    const idIndex = segmentos.indexOf('excursiones') + 1;
+  // GET /detalle?empresa=001&id=1&lang=es (objeto completo)
+  if (path.endsWith('/detalle')) {
+    const id = Number(params.get('id'));
+    const encontrada = EXCURSIONES_MOCK.find((e) => e.id === id);
+    const excursion = encontrada ? excursionConDisponibilidad(encontrada) : null;
+    return of(new HttpResponse({ status: 200, body: excursion }));
+  }
 
-    // GET detalle por id (objeto completo)
-    if (idIndex < segmentos.length) {
-      const id = Number(segmentos[idIndex]);
-      const encontrada = EXCURSIONES_MOCK.find((e) => e.id === id);
-      const excursion = encontrada ? excursionConDisponibilidad(encontrada) : null;
-      return of(new HttpResponse({ status: 200, body: excursion }));
-    }
-
-    // GET listado (objeto ligero)
+  // GET /excursiones?empresa=001&lang=es (listado ligero)
+  if (path.endsWith('/excursiones')) {
     const listado: ExcursionResumen[] = EXCURSIONES_MOCK.map((e) => ({
       id: e.id,
       titulo: e.titulo,
@@ -75,9 +71,9 @@ export const mockInterceptor: HttpInterceptorFn = (req, next) => {
     return of(new HttpResponse({ status: 200, body: listado }));
   }
 
-  // GET disponibilidad: .../excursiones/:id/disponibilidad/:fecha
-  if (path.includes('disponibilidad')) {
-    const fecha = path.split('/').pop() ?? '';
+  // GET /disponibilidad?empresa=001&id=1&fecha=YYYY-MM-DD
+  if (path.endsWith('/disponibilidad')) {
+    const fecha = params.get('fecha') ?? '';
     const body: Disponibilidad = {
       fecha,
       horarios: [

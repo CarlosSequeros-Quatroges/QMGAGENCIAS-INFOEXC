@@ -27,6 +27,6 @@ export class DetalleComponent {
 
   /** Carga reactiva de la excursión; se recarga sola si cambia el id o el idioma. */
   excursion = httpResource<Excursion>(
-    () => `${environment.apiUrl}/${this.empresa()}/excursiones/${this.id()}?lang=${this.i18n.idioma()}`,
+    () => `${environment.apiUrl}/detalle?empresa=${this.empresa()}&id=${this.id()}&lang=${this.i18n.idioma()}`,
   );
 }

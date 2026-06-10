@@ -6,11 +6,15 @@ funciona sin cambios: basta con desactivar el `mockInterceptor`
 
 ## Convenciones generales
 
-- **Base URL:** `/api/v1` (configurable en `environment.apiUrl`; en dev: `http://localhost:3000/api/v1`).
-- **`{empresa}`:** código de **3 dígitos** del QR. El frontend valida `^\d{3}$` antes de llamar.
+- **Base URL:** `/mgwage/rest/infoexc` (configurable en `environment.apiUrl`; en dev:
+  `http://localhost:3000/mgwage/rest/infoexc`).
+- **Parámetros por query string:** todos los parámetros (incluida la empresa, el id y la fecha)
+  viajan como **query params**, no como segmentos de ruta.
+- **`empresa`:** código de **3 dígitos** del QR (query param `?empresa=`). El frontend valida
+  `^\d{3}$` antes de llamar.
 - **Método:** todos **GET**.
 - **Content-Type:** `application/json; charset=utf-8`.
-- **Idioma:** parámetro de query **`?lang=`** con valores `es | en | de | fr` (por defecto `es`).
+- **Idioma:** parámetro de query **`&lang=`** con valores `es | en | de | fr` (por defecto `es`).
   Solo afecta al **texto de contenido** (título, entradilla, detalle).
 - **Errores:** `404` si la empresa o la excursión no existen; `400` si los parámetros son
   inválidos. El frontend muestra un estado de error ante cualquier respuesta no 2xx.
@@ -22,10 +26,10 @@ funciona sin cambios: basta con desactivar el `mockInterceptor`
 ## 1) Datos de marca de la empresa
 
 ```
-GET /api/v1/{empresa}/info
+GET /mgwage/rest/infoexc/info?empresa=001
 ```
 
-**Parámetros:** `empresa` (path).
+**Parámetros:** `empresa` (query).
 
 **Respuesta `200`:**
 ```json
@@ -49,10 +53,10 @@ GET /api/v1/{empresa}/info
 ## 2) Listado de excursiones (galería) — **ligero**
 
 ```
-GET /api/v1/{empresa}/excursiones?lang=es
+GET /mgwage/rest/infoexc/excursiones?empresa=001&lang=es
 ```
 
-**Parámetros:** `empresa` (path), `lang` (query).
+**Parámetros:** `empresa` (query), `lang` (query).
 
 **Respuesta `200`:** array de objetos **ligeros** (la galería solo necesita estos campos →
 menos datos, carga más rápida):
@@ -81,10 +85,10 @@ menos datos, carga más rápida):
 ## 3) Detalle de una excursión — **completo**
 
 ```
-GET /api/v1/{empresa}/excursiones/{id}?lang=es
+GET /mgwage/rest/infoexc/detalle?empresa=001&id=1&lang=es
 ```
 
-**Parámetros:** `empresa` (path), `id` (path), `lang` (query).
+**Parámetros:** `empresa` (query), `id` (query), `lang` (query).
 
 **Respuesta `200`:**
 ```json
@@ -116,10 +120,10 @@ GET /api/v1/{empresa}/excursiones/{id}?lang=es
 ## 4) Disponibilidad de un día (precios y horarios)
 
 ```
-GET /api/v1/{empresa}/excursiones/{id}/disponibilidad/{fecha}
+GET /mgwage/rest/infoexc/disponibilidad?empresa=001&id=1&fecha=2026-06-12
 ```
 
-**Parámetros:** `empresa` (path), `id` (path), `fecha` (path, `YYYY-MM-DD`).
+**Parámetros:** `empresa` (query), `id` (query), `fecha` (query, `YYYY-MM-DD`).
 No necesita `lang` (solo devuelve números y horas).
 
 **Respuesta `200`:**
@@ -160,7 +164,7 @@ No necesita `lang` (solo devuelve números y horas).
 
 | # | Método | Ruta | Query | Devuelve |
 |---|---|---|---|---|
-| 1 | GET | `/{empresa}/info` | — | Marca de la empresa |
-| 2 | GET | `/{empresa}/excursiones` | `lang` | Listado ligero |
-| 3 | GET | `/{empresa}/excursiones/{id}` | `lang` | Detalle completo |
-| 4 | GET | `/{empresa}/excursiones/{id}/disponibilidad/{fecha}` | — | Precios y horarios del día |
+| 1 | GET | `/info` | `empresa` | Marca de la empresa |
+| 2 | GET | `/excursiones` | `empresa`, `lang` | Listado ligero |
+| 3 | GET | `/detalle` | `empresa`, `id`, `lang` | Detalle completo |
+| 4 | GET | `/disponibilidad` | `empresa`, `id`, `fecha` | Precios y horarios del día |

@@ -18,7 +18,7 @@ export class ExcursionesService {
     () => {
       const codigo = this.empresa.codigo();
       return codigo
-        ? `${environment.apiUrl}/${codigo}/excursiones?lang=${this.i18n.idioma()}`
+        ? `${environment.apiUrl}/excursiones?empresa=${codigo}&lang=${this.i18n.idioma()}`
         : undefined;
     },
     { defaultValue: [] },

@@ -37,7 +37,7 @@
   "dataGroups": [
     {
       "name": "api-excursiones",
-      "urls": ["/**/api/v1/**/excursiones", "/**/api/v1/**/excursiones/**"],
+      "urls": ["/**/infoexc/info?**", "/**/infoexc/excursiones?**"],
       "cacheConfig": {
         "strategy": "freshness",
         "maxSize": 100,

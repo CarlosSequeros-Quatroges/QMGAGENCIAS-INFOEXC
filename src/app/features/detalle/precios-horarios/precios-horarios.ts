@@ -23,6 +23,6 @@ export class PreciosHorarios {
   disponibilidad = httpResource<Disponibilidad>(() => {
     const fecha = this.fecha();
     if (!fecha) return undefined;
-    return `${environment.apiUrl}/${this.empresa()}/excursiones/${this.excursionId()}/disponibilidad/${fecha}`;
+    return `${environment.apiUrl}/disponibilidad?empresa=${this.empresa()}&id=${this.excursionId()}&fecha=${fecha}`;
   });
 }
