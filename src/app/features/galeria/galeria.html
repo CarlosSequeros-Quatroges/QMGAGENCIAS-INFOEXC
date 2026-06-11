@@ -1,5 +1,9 @@
 <div class="galeria-page">
   @if (excursiones.isLoading()) {
+    <div class="galeria-cargando" role="status" aria-live="polite">
+      <div class="barra-progreso"><div class="barra-progreso-fill"></div></div>
+      <span class="galeria-cargando-texto">{{ i18n.t('galeria.cargando') }}</span>
+    </div>
     <div class="galeria-skeleton">
       @for (item of [1, 2, 3]; track item) {
         <div class="skeleton-card">
@@ -17,8 +21,26 @@
       <p>{{ i18n.t('galeria.error') }}</p>
     </div>
   } @else {
+    @if (diasConDisponibilidad().length) {
+      <section class="galeria-filtro">
+        <div class="galeria-filtro-cabecera">
+          <h2 class="galeria-filtro-titulo">{{ i18n.t('galeria.filtrarFecha') }}</h2>
+          @if (fechaFiltro()) {
+            <button type="button" class="galeria-filtro-limpiar" (click)="limpiarFiltro()">
+              {{ i18n.t('galeria.verTodas') }}
+            </button>
+          }
+        </div>
+        <app-selector-dias
+          [diasDisponibles]="diasConDisponibilidad()"
+          [(fechaSeleccionada)]="fechaFiltro"
+          [mostrarLeyenda]="false"
+        />
+      </section>
+    }
+
     <div class="galeria-grid">
-      @for (excursion of excursiones.value(); track excursion.id) {
+      @for (excursion of excursionesVisibles(); track excursion.id) {
         <app-tarjeta-excursion [excursion]="excursion" (verDetalle)="verDetalle($event)" />
       }
     </div>

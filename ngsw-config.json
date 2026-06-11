@@ -30,7 +30,7 @@
       "updateMode": "prefetch",
       "cacheQueryOptions": { "ignoreVary": true },
       "resources": {
-        "urls": ["https://picsum.photos/**", "https://*.picsum.photos/**"]
+        "urls": ["/**/descargas/**"]
       }
     }
   ],

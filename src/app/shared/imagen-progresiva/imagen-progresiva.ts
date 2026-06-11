@@ -7,14 +7,16 @@ import {
   viewChild,
 } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
+import { SinImagen } from '../sin-imagen/sin-imagen';
 
 /**
  * Imagen con carga progresiva: muestra una miniatura pixelada (LQIP) con animación de
  * pulso mientras descarga la imagen real, y hace un crossfade a nítida al cargar.
+ * Si la descarga falla (404), muestra el placeholder "sin imagen".
  */
 @Component({
   selector: 'app-imagen-progresiva',
-  imports: [NgOptimizedImage],
+  imports: [NgOptimizedImage, SinImagen],
   templateUrl: './imagen-progresiva.html',
   styleUrl: './imagen-progresiva.scss',
 })

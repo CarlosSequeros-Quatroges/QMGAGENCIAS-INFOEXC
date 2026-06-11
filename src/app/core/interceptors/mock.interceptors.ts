@@ -1,9 +1,8 @@
 import { HttpInterceptorFn, HttpResponse } from '@angular/common/http';
 import { of } from 'rxjs';
 import { EXCURSIONES_MOCK } from '../mocks/excursiones.mock';
-import { Excursion, ExcursionResumen } from '../models/excursion.model';
+import { Excursion } from '../models/excursion.model';
 import { Disponibilidad } from '../models/disponibilidad.model';
-import { EmpresaModel } from '../models/empresa.model';
 
 // Patrón de días de la semana en los que opera cada excursión (0=domingo … 6=sábado).
 const PATRON_DIAS: Record<number, number[]> = {
@@ -32,6 +31,12 @@ function excursionConDisponibilidad(e: Excursion): Excursion {
   return { ...e, diasDisponibles: proximasFechas(PATRON_DIAS[e.id] ?? [1, 3, 5]) };
 }
 
+/**
+ * Mock SOLO de los endpoints aún no fiables en el backend: `/detalle` y `/disponibilidad`.
+ * La galería (`/info`, `/excursiones`) y las imágenes (`/descargas/...`) ya van al backend
+ * real: pasan de largo con `next(req)`. Cuando el backend dé detalle/disponibilidad fiables,
+ * borra estos bloques (o quita el interceptor en `app.config.ts`) para ir 100% al backend.
+ */
 export const mockInterceptor: HttpInterceptorFn = (req, next) => {
   if (req.method !== 'GET') return next(req);
 
@@ -39,36 +44,12 @@ export const mockInterceptor: HttpInterceptorFn = (req, next) => {
   const [path, query = ''] = req.url.split('?');
   const params = new URLSearchParams(query);
 
-  // GET /info?empresa=001 (datos de marca de la empresa)
-  if (path.endsWith('/info')) {
-    const codigo = params.get('empresa') ?? '';
-    const body: EmpresaModel = {
-      codigo,
-      nombre: 'Fuerte Itaka',
-      logoUrl: 'https://fuerteitaka.com/wp-content/uploads/2022/06/fuerte-itaka-logo-01.png',
-      colorPrimario: '#C20E1A',
-    };
-    return of(new HttpResponse({ status: 200, body }));
-  }
-
   // GET /detalle?empresa=001&id=1&lang=es (objeto completo)
   if (path.endsWith('/detalle')) {
     const id = Number(params.get('id'));
     const encontrada = EXCURSIONES_MOCK.find((e) => e.id === id);
     const excursion = encontrada ? excursionConDisponibilidad(encontrada) : null;
     return of(new HttpResponse({ status: 200, body: excursion }));
-  }
-
-  // GET /excursiones?empresa=001&lang=es (listado ligero)
-  if (path.endsWith('/excursiones')) {
-    const listado: ExcursionResumen[] = EXCURSIONES_MOCK.map((e) => ({
-      id: e.id,
-      titulo: e.titulo,
-      entradilla: e.entradilla,
-      imagenThumb: e.imagenThumb,
-      precioDesde: e.precioDesde,
-    }));
-    return of(new HttpResponse({ status: 200, body: listado }));
   }
 
   // GET /disponibilidad?empresa=001&id=1&fecha=YYYY-MM-DD

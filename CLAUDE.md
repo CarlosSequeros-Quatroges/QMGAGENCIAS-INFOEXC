@@ -25,6 +25,11 @@ npm run build      # build de producción (genera el service worker)
 npm run lint
 ```
 
+El backend está en **otro host**, así que en dev se usa el **proxy de Angular** (`proxy.conf.json`,
+ya cableado en `angular.json` → serve:development). Las URLs en dev son **relativas**
+(`environment.development.ts`) y `ng serve` las reenvía al backend; cambia el `target` del proxy si
+el backend cambia de host. En **producción** se usan las URLs absolutas de `environment.ts`.
+
 Probar la **PWA / offline** (el SW solo corre en build de producción, NO en `ng serve`):
 ```bash
 npm run build
@@ -40,12 +45,18 @@ npx serve -s dist/qMGAgencias-infoExc/browser -l 8080   # abrir http://localhost
 
 ## Backend / API
 
-- URL base en `src/environments/environment.ts` → `apiUrl` (dev: `http://localhost:3000/mgwage/rest/infoexc`).
+- URL base: **prod** en `environment.ts` (absoluta, `http://192.168.1.51:8094/mgwage/rest/infoexc`);
+  **dev** en `environment.development.ts` (relativa, `/mgwage/rest/infoexc`) reenviada por `proxy.conf.json`.
 - **Estilo query-param**: empresa, id y fecha viajan como query (`?empresa=001&id=1&lang=es&fecha=YYYY-MM-DD`),
   no como segmentos de ruta. Idioma vía `&lang=` (`es|en|de|fr`).
 - Endpoints: `/info`, `/excursiones`, `/detalle`, `/disponibilidad`. Ver `docs/api-contract.md` para JSON exacto.
-- Mientras no haya backend, todo lo sirve `core/interceptors/mock.interceptors.ts`. Para conectar el
-  backend real: apuntar `apiUrl` y desactivar el `mockInterceptor` en `app.config.ts`.
+- **Imágenes**: ficheros estáticos en `${descargasUrl}/emp{empresa}/{nombreFichero}` (`environment.descargasUrl`).
+  El listado/detalle traen el **nombre de fichero** (`imagenThumb`/`imagenes[]`) y el LQIP base64 (`imagenLowres`),
+  no URLs. El frontend compone la URL en `core/services/imagenes.ts`.
+- **Estado del backend (parcial)**: la **galería** ya va al backend real (`/info`, `/excursiones`, imágenes).
+  `detalle` y `disponibilidad` siguen en **mock** (`core/interceptors/mock.interceptors.ts`) porque el backend
+  aún los da como esqueleto. Para pasarlos a real: borrar sus bloques del mock (o quitar el interceptor en
+  `app.config.ts`). ⚠️ `precioDesde` llega como **0** del backend (pendiente); la tarjeta oculta el precio si es 0.
 - El mock **ignora `lang`** (contenido solo en español); el backend debe traducir título/entradilla/detalle.
 
 ## Decisiones clave (ya implementadas)
@@ -54,14 +65,16 @@ npx serve -s dist/qMGAgencias-infoExc/browser -l 8080   # abrir http://localhost
   disponibilidad, `PreloadAllModules` en el router, skeletons + shimmer, `NgOptimizedImage`.
   ⚠️ En `NgOptimizedImage`, `sizes` solo admite valores responsive (vw), **nunca px** (error NG02952).
 - **Imagen progresiva** (`shared/imagen-progresiva`): miniatura pixelada (LQIP, `image-rendering: pixelated`)
-  con pulso y crossfade a nítida. La miniatura la deriva `core/utils/imagen.util.ts` (truco picsum solo
-  para el mock; en producción la dará el backend).
+  con pulso y crossfade a nítida. En la **galería** el LQIP es el `imagenLowres` (base64) del backend y la imagen
+  nítida es la URL del fichero (`NgOptimizedImage`). En el **carrusel del detalle** (aún en mock) el LQIP lo
+  deriva `core/utils/imagen.util.ts` (truco picsum). Sin foto → placeholder "sin foto" en la tarjeta.
 - **PWA**: `ngsw-config.json` cachea imágenes y tiene `dataGroup` para la API. Offline verificado.
 - **i18n**: 4 idiomas (ES/EN/DE/FR), sistema propio en `core/i18n` (sin librería, traducciones
   empaquetadas → offline). `I18nService.t('clave')` reactivo. Selector de **banderas SVG** (en
   `public/flags/`, NO emojis porque no renderizan en Windows) en el header. Días localizados con `Intl`.
-- **Branding**: header data-driven desde `/info` (`EmpresaService.branding`). Color de acento global
-  en variable CSS `--color-acento` (`styles.scss`). ⚠️ El branding actual (logo Fuerte Itaka, rojo
+- **Branding**: el **logo** es un asset fijo del frontend (`public/fuerte-itaka-logo.png`, servido en la raíz) y el
+  **color de acento** es fijo en la variable CSS `--color-acento` (`styles.scss`). NO viajan en `/info`
+  (`EmpresaModel` solo lleva `codigo` y `nombre`). ⚠️ El branding actual (logo Fuerte Itaka, rojo
   **#C20E1A**) es **PROVISIONAL**, pendiente de confirmar en reunión con el cliente.
 - `@Service()` (Angular 22) es válido: equivale a `@Injectable({ providedIn: 'root' })`. No es un error.
 
@@ -72,8 +85,8 @@ npx serve -s dist/qMGAgencias-infoExc/browser -l 8080   # abrir http://localhost
 
 ## Pendiente / próximos pasos
 
-- Conectar el **backend real** (apuntar `apiUrl`, desactivar mock).
-- **Imágenes locales** en el mock o esperar al CDN del backend (mejora fiabilidad offline).
+- Conectar `detalle` y `disponibilidad` al **backend real** (quitar sus bloques del mock) cuando dejen de ser esqueleto.
+- Backend: servir `precioDesde` real (hoy 0) y los ficheros de imagen del detalle (`imagenes[]`).
 - Aviso de **nueva versión** con `SwUpdate` (complementa el service worker).
 - **Image loader** responsive de `NgOptimizedImage` cuando se decida el alojamiento de imágenes.
 - Cerrar el **branding** definitivo tras la reunión con el cliente.

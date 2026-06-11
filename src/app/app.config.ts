@@ -10,7 +10,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     // PreloadAllModules: precarga los chunks lazy (p. ej. el detalle) en segundo plano
-    // cuando el navegador está libre, para que la navegación sea instantánea.
+    // cuando el navegador está libre, para que la navegaciºón sea instantánea.
     provideRouter(routes, withPreloading(PreloadAllModules)),
     // fetch es el backend por defecto en Angular 22 (compatible con httpResource()).
     provideHttpClient(withInterceptors([mockInterceptor])),

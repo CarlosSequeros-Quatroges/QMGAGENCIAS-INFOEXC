@@ -1,8 +1,16 @@
 <div class="ip-wrap" [class.cargada]="cargada()" [class.fallida]="fallida()">
   @if (placeholder()) {
-    <div class="ip-lqip" [style.background-image]="'url(' + placeholder() + ')'"></div>
+    <div class="ip-lqip" [style.background-image]="'url(\'' + placeholder() + '\')'"></div>
   } @else {
     <div class="ip-lqip ip-lqip--vacio"></div>
+  }
+
+  @if (!cargada() && !fallida()) {
+    <div class="ip-spinner" aria-hidden="true"></div>
+  }
+
+  @if (fallida()) {
+    <app-sin-imagen />
   }
 
   <img

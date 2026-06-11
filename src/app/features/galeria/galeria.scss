@@ -10,6 +10,98 @@
   gap: 1.5rem;
 }
 
+// Filtro por fecha (calendario de hoy → +15 días)
+.galeria-filtro {
+  margin-bottom: 1.5rem;
+}
+
+.galeria-filtro-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.galeria-filtro-titulo {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.galeria-filtro-limpiar {
+  all: unset;
+  flex: none;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-acento);
+  color: var(--color-acento);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+// Indicador de carga de datos (barra indeterminada + texto)
+.galeria-cargando {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.barra-progreso {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: #e9e9e9;
+  overflow: hidden;
+}
+
+.barra-progreso-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 40%;
+  border-radius: 2px;
+  background: var(--color-acento);
+  animation: barra-indeterminada 1.3s ease-in-out infinite;
+}
+
+@keyframes barra-indeterminada {
+  0% {
+    left: -40%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.galeria-cargando-texto {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .barra-progreso-fill {
+    animation: none;
+    width: 100%;
+    opacity: 0.6;
+  }
+}
+
 // Skeleton loader
 .galeria-skeleton {
   display: grid;

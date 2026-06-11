@@ -1,5 +1,5 @@
 import { Component, computed, inject, input, model } from '@angular/core';
-import { I18nService } from '../../../core/i18n/i18n';
+import { I18nService } from '../../core/i18n/i18n';
 
 interface DiaCalendario {
   fecha: string; // YYYY-MM-DD
@@ -18,6 +18,8 @@ export class SelectorDias {
   diasDisponibles = input.required<string[]>();
   /** Fecha seleccionada (two-way: [(fechaSeleccionada)]). */
   fechaSeleccionada = model<string | null>(null);
+  /** Leyenda "Excursión disponible: Lun, Mié…" (útil en detalle; se oculta al filtrar la galería). */
+  mostrarLeyenda = input<boolean>(true);
 
   protected i18n = inject(I18nService);
 

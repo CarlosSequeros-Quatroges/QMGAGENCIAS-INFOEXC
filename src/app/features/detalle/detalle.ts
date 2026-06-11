@@ -6,7 +6,7 @@ import { EmpresaService } from '../../core/services/empresa';
 import { I18nService } from '../../core/i18n/i18n';
 import { environment } from '../../../environments/environment';
 import { Carrusel } from './carrusel/carrusel';
-import { SelectorDias } from './selector-dias/selector-dias';
+import { SelectorDias } from '../../shared/selector-dias/selector-dias';
 import { PreciosHorarios } from './precios-horarios/precios-horarios';
 
 @Component({

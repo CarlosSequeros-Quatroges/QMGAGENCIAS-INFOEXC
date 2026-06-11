@@ -1,6 +1,6 @@
 @if (branding.value(); as empresa) {
-  <header class="cab" [style.border-bottom-color]="empresa.colorPrimario">
-    <img class="cab-logo" [src]="empresa.logoUrl" [alt]="empresa.nombre" />
+  <header class="cab">
+    <img class="cab-logo" src="fuerte-itaka-logo.png" [alt]="empresa.nombre" />
     <app-selector-idioma />
   </header>
 } @else if (branding.isLoading()) {

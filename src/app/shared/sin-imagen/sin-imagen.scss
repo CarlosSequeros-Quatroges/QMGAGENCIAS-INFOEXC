@@ -1,0 +1,24 @@
+.sin-imagen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  text-align: center;
+  background: #f0f1f3;
+}
+
+.sin-imagen-icono {
+  width: 56px;
+  height: 56px;
+  flex: none;
+}
+
+.sin-imagen-texto {
+  font-size: 0.8rem;
+  color: #8b919b;
+  line-height: 1.2;
+}

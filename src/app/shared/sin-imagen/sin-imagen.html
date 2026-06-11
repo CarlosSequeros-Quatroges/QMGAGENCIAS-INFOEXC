@@ -1,0 +1,15 @@
+<div class="sin-imagen" role="img" [attr.aria-label]="i18n.t('imagen.noDisponible')">
+  <svg class="sin-imagen-icono" viewBox="0 0 64 64" aria-hidden="true">
+    <!-- cuerpo de la cámara -->
+    <rect x="6" y="22" width="52" height="30" rx="6" fill="#c7ccd4" />
+    <!-- visor superior -->
+    <path d="M22 22 L25 16 Q26 14 28 14 L36 14 Q38 14 39 16 L42 22 Z" fill="#c7ccd4" />
+    <!-- objetivo -->
+    <circle cx="32" cy="38" r="11" fill="#eef0f3" />
+    <circle cx="32" cy="38" r="6" fill="#aeb4be" />
+    <!-- tachado (línea de fondo para el "corte" + línea oscura) -->
+    <line x1="13" y1="11" x2="53" y2="55" stroke="#f0f1f3" stroke-width="8" stroke-linecap="round" />
+    <line x1="13" y1="11" x2="53" y2="55" stroke="#8b919b" stroke-width="4" stroke-linecap="round" />
+  </svg>
+  <span class="sin-imagen-texto">{{ i18n.t('imagen.noDisponible') }}</span>
+</div>

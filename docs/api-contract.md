@@ -35,9 +35,7 @@ GET /mgwage/rest/infoexc/info?empresa=001
 ```json
 {
   "codigo": "123",
-  "nombre": "Fuerte Itaka",
-  "logoUrl": "https://cdn.fuerteitaka.com/branding/logo.png",
-  "colorPrimario": "#C20E1A"
+  "nombre": "Fuerte Itaka"
 }
 ```
 
@@ -45,8 +43,9 @@ GET /mgwage/rest/infoexc/info?empresa=001
 |---|---|---|
 | `codigo` | string | El mismo código de 3 dígitos |
 | `nombre` | string | Nombre de la empresa (usado como `alt` del logo) |
-| `logoUrl` | string | URL absoluta del logo (PNG/SVG, fondo transparente recomendado) |
-| `colorPrimario` | string | Color de marca en hex `#RRGGBB`. El frontend lo usa como color de acento |
+
+> El **logo** es un asset fijo del frontend (`public/fuerte-itaka-logo.png`) y el **color de acento** es fijo
+> (variable CSS `--color-acento` en `styles.scss`). No viajan en la respuesta de `/info`.
 
 ---
 
@@ -66,7 +65,8 @@ menos datos, carga más rápida):
     "id": 1,
     "titulo": "Ruta por el Teide",
     "entradilla": "Ascensión guiada al volcán más alto de España.",
-    "imagenThumb": "https://cdn.fuerteitaka.com/exc/1/thumb.webp",
+    "imagenLowres": "data:image/webp;base64,UklGR…",
+    "imagenThumb": "img0030-gal.webp",
     "precioDesde": 45
   }
 ]
@@ -77,7 +77,8 @@ menos datos, carga más rápida):
 | `id` | number | Identificador de la excursión |
 | `titulo` | string | Traducido según `lang` |
 | `entradilla` | string | Resumen corto, traducido |
-| `imagenThumb` | string | URL de miniatura ligera (~400 px) |
+| `imagenLowres` | string | Miniatura LQIP **embebida** como data URI base64 (~24 px). `""` si no hay imagen. La usa el frontend como placeholder pixelado mientras carga la real |
+| `imagenThumb` | string | **Nombre del fichero** de la imagen (no una URL). El frontend compone la URL real (ver §5). `""` si no hay imagen |
 | `precioDesde` | number | Precio "desde" en € (entero o decimal) |
 
 ---
@@ -110,10 +111,13 @@ GET /mgwage/rest/infoexc/detalle?empresa=001&id=1&lang=es
 
 | Campo | Tipo | Notas |
 |---|---|---|
-| `id`, `titulo`, `entradilla`, `imagenThumb`, `precioDesde` | — | Igual que en el listado |
+| `id`, `titulo`, `entradilla`, `imagenLowres`, `imagenThumb`, `precioDesde` | — | Igual que en el listado |
 | `detalle` | string | Descripción larga, traducida según `lang` |
-| `imagenes` | string[] | URLs del carrusel. La **primera** es la principal (LCP) |
+| `imagenes` | string[] | **Nombres de fichero** del carrusel (no URLs). La **primera** es la principal (LCP). El frontend compone cada URL como en §5 |
 | `diasDisponibles` | string[] | Fechas con excursión, formato `YYYY-MM-DD`. Basta con devolver las de **hoy → +15 días** (el calendario solo pinta 16 días) |
+
+> ⚠️ **Pendiente:** hoy `/detalle` y `/disponibilidad` devuelven datos de **esqueleto** (no fiables);
+> el frontend los sirve aún con el `mockInterceptor` hasta que el backend los cierre.
 
 ---
 
@@ -148,13 +152,35 @@ No necesita `lang` (solo devuelve números y horas).
 
 ---
 
+## 5) Ficheros de imagen (estáticos)
+
+Las imágenes **no viajan en el JSON**: se sirven como ficheros estáticos y el frontend compone
+la URL a partir del **código de empresa** y el **nombre de fichero** (`imagenThumb` / `imagenes[]`):
+
+```text
+GET {descargasUrl}/emp{empresa}/{nombreFichero}
+
+Ejemplo: GET /descargas/emp102/img0030-gal.webp
+```
+
+- **`descargasUrl`** es configurable en `environment.descargasUrl` (independiente de `apiUrl`).
+- El nombre de la carpeta es **`emp` + código de empresa** (3 dígitos), p. ej. `emp102`.
+- **Formato recomendado:** WebP/AVIF. Conviene `Cache-Control` largo (los ficheros son inmutables;
+  el service worker los cachea en el `assetGroup` `imagenes-excursiones`).
+- **Imagen ausente:** si la excursión no tiene foto, `imagenThumb` e `imagenLowres` llegan como `""`;
+  el frontend muestra un placeholder "sin foto".
+
+> El **LQIP** (carga progresiva) lo cubre `imagenLowres` (base64 embebido en el JSON del listado/detalle):
+> el frontend lo pinta pixelado mientras descarga el fichero real y hace crossfade.
+
+---
+
 ## Recomendaciones (opcionales)
 
-1. **Placeholder LQIP:** para la carga progresiva de imágenes, sería ideal que cada imagen
-   incluyera un micro-placeholder (data-URI base64 de ~24 px, o una `imagenLowres`). Hoy el
-   frontend lo deriva con un truco solo válido en el mock.
-2. **Formato e CDN de imágenes:** WebP/AVIF con redimensionado por URL para activar el
-   *image loader* responsive que el frontend ya tiene preparado.
+1. **`imagenLowres` (LQIP):** mantener el micro data-URI base64 (~24 px) en cada item del listado y
+   del detalle; es lo que da la carga progresiva sin peticiones extra.
+2. **Formato e CDN de imágenes:** WebP/AVIF; con `Cache-Control` largo en `/descargas/**` el service
+   worker las cachea y la app funciona offline tras la primera visita.
 3. **`Cache-Control`** en `/info` y `/excursiones` (cambian poco): el service worker tiene un
    `dataGroup` (`api-excursiones`, estrategia *freshness*) que lo aprovecha.
 
@@ -168,3 +194,4 @@ No necesita `lang` (solo devuelve números y horas).
 | 2 | GET | `/excursiones` | `empresa`, `lang` | Listado ligero |
 | 3 | GET | `/detalle` | `empresa`, `id`, `lang` | Detalle completo |
 | 4 | GET | `/disponibilidad` | `empresa`, `id`, `fecha` | Precios y horarios del día |
+| 5 | GET | `{descargasUrl}/emp{empresa}/{fichero}` | — | Fichero de imagen (estático) |

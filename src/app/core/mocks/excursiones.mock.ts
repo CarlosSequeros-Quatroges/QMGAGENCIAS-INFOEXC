@@ -7,6 +7,7 @@ export const EXCURSIONES_MOCK: Excursion[] = [
     entradilla: 'Ascensión guiada al volcán más alto de España con vistas espectaculares.',
     detalle:
       'Una experiencia única recorriendo los paisajes lunares del Parque Nacional del Teide. Incluye teleférico, guía especializado y seguro de montaña.',
+    imagenLowres: '',
     imagenThumb: 'https://picsum.photos/seed/teide/400/250',
     imagenes: [
       'https://picsum.photos/seed/teide4/800/500',
@@ -22,6 +23,7 @@ export const EXCURSIONES_MOCK: Excursion[] = [
     entradilla: 'Navega por el estrecho de La Gomera y observa delfines y ballenas en su hábitat.',
     detalle:
       'Salida en catamarán desde Los Cristianos. Alta probabilidad de avistamiento de calderones, delfines mulares y en temporada, ballenas piloto.',
+    imagenLowres: '',
     imagenThumb: 'https://picsum.photos/seed/ballenas/400/250',
     imagenes: [
       'https://picsum.photos/seed/ballenas1/800/500',
@@ -36,6 +38,7 @@ export const EXCURSIONES_MOCK: Excursion[] = [
     entradilla: 'Recorre los paisajes volcánicos del sur en quad con guía experto.',
     detalle:
       'Ruta de 2 horas en quad por pistas y paisajes volcánicos únicos. Sin experiencia previa necesaria. Incluye casco, guantes y seguro.',
+    imagenLowres: '',
     imagenThumb: 'https://picsum.photos/seed/quad/400/250',
     imagenes: [
       'https://picsum.photos/seed/quad1/800/500',

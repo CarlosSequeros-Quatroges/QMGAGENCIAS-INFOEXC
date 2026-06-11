@@ -17,8 +17,12 @@ type Diccionario = Record<string, string>;
 
 export const TRADUCCIONES: Record<Idioma, Diccionario> = {
   es: {
+    'galeria.cargando': 'Cargando excursiones…',
     'galeria.error': 'No se han podido cargar las excursiones. Inténtalo de nuevo.',
+    'galeria.filtrarFecha': 'Filtra por fecha',
+    'galeria.verTodas': 'Ver todas',
     'tarjeta.desde': 'desde',
+    'imagen.noDisponible': 'Imagen no disponible',
     'detalle.volver': 'Volver',
     'detalle.eligeDia': 'Elige tu día',
     'detalle.precios': 'Precios y horarios',
@@ -33,8 +37,12 @@ export const TRADUCCIONES: Record<Idioma, Diccionario> = {
     'error.texto': 'Escanea de nuevo el código QR de tu hotel para ver las excursiones disponibles.',
   },
   en: {
+    'galeria.cargando': 'Loading excursions…',
     'galeria.error': 'The excursions could not be loaded. Please try again.',
+    'galeria.filtrarFecha': 'Filter by date',
+    'galeria.verTodas': 'Show all',
     'tarjeta.desde': 'from',
+    'imagen.noDisponible': 'No image available',
     'detalle.volver': 'Back',
     'detalle.eligeDia': 'Choose your day',
     'detalle.precios': 'Prices and times',
@@ -49,8 +57,12 @@ export const TRADUCCIONES: Record<Idioma, Diccionario> = {
     'error.texto': 'Scan your hotel’s QR code again to see the available excursions.',
   },
   de: {
+    'galeria.cargando': 'Ausflüge werden geladen…',
     'galeria.error': 'Die Ausflüge konnten nicht geladen werden. Bitte versuchen Sie es erneut.',
+    'galeria.filtrarFecha': 'Nach Datum filtern',
+    'galeria.verTodas': 'Alle anzeigen',
     'tarjeta.desde': 'ab',
+    'imagen.noDisponible': 'Kein Bild verfügbar',
     'detalle.volver': 'Zurück',
     'detalle.eligeDia': 'Wähle deinen Tag',
     'detalle.precios': 'Preise und Uhrzeiten',
@@ -66,8 +78,12 @@ export const TRADUCCIONES: Record<Idioma, Diccionario> = {
       'Scannen Sie den QR-Code Ihres Hotels erneut, um die verfügbaren Ausflüge zu sehen.',
   },
   fr: {
+    'galeria.cargando': 'Chargement des excursions…',
     'galeria.error': 'Les excursions n’ont pas pu être chargées. Veuillez réessayer.',
+    'galeria.filtrarFecha': 'Filtrer par date',
+    'galeria.verTodas': 'Voir toutes',
     'tarjeta.desde': 'à partir de',
+    'imagen.noDisponible': 'Image non disponible',
     'detalle.volver': 'Retour',
     'detalle.eligeDia': 'Choisissez votre jour',
     'detalle.precios': 'Prix et horaires',

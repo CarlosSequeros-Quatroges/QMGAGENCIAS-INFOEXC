@@ -9,5 +9,5 @@ import { HeaderComponent } from './shared/header/header';
   styleUrl: './app.scss',
 })
 export class App {
-  protected readonly title = signal('pepe');
+  protected readonly title = signal('qMGAgencias-infoExc');
 }

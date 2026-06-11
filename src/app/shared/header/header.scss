@@ -9,7 +9,7 @@
   height: 56px;
   padding: 0 1rem;
   background: #fff;
-  border-bottom: 3px solid #c20e1a; // color de marca (fallback)
+  border-bottom: 3px solid var(--color-acento); // color de marca
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
 }
 

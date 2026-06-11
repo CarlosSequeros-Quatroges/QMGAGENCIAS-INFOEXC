@@ -1,5 +1,5 @@
 <div class="selector">
-  @if (diasSemanaOperativos().length) {
+  @if (mostrarLeyenda() && diasSemanaOperativos().length) {
     <p class="selector-leyenda">
       {{ i18n.t('selector.disponible') }} <strong>{{ diasSemanaOperativos().join(', ') }}</strong>
     </p>

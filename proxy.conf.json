@@ -1,0 +1,12 @@
+{
+  "/mgwage": {
+    "target": "http://192.168.1.51:8094",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/descargas": {
+    "target": "http://192.168.1.51:8094",
+    "secure": false,
+    "changeOrigin": true
+  }
+}
