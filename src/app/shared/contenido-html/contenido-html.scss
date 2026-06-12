@@ -1,0 +1,7 @@
+.contenido-html {
+  display: block;
+  width: 100%;
+  border: 0;
+  // La altura real la fija el JS según el contenido; este mínimo evita el salto inicial.
+  min-height: 160px;
+}

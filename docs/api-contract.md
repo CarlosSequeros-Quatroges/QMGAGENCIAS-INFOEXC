@@ -63,71 +63,74 @@ menos datos, carga más rápida):
 [
   {
     "id": 1,
+    "codexc": "0030",
     "titulo": "Ruta por el Teide",
     "entradilla": "Ascensión guiada al volcán más alto de España.",
     "imagenLowres": "data:image/webp;base64,UklGR…",
     "imagenThumb": "img0030-gal.webp",
-    "precioDesde": 45
+    "precioDesde": 45,
+    "diasDisponibles": ["2026-06-12", "2026-06-15", "2026-06-17"]
   }
 ]
 ```
 
 | Campo | Tipo | Notas |
 |---|---|---|
-| `id` | number | Identificador de la excursión |
+| `id` | number | Identificador numérico de la fila |
+| `codexc` | string | **Código de negocio** de la excursión (p. ej. `"0030"`). Es la **clave** con la que el frontend pide `/detalle` y `/disponibilidad`, y cuadra con el nombre del fichero de imagen |
 | `titulo` | string | Traducido según `lang` |
 | `entradilla` | string | Resumen corto, traducido |
 | `imagenLowres` | string | Miniatura LQIP **embebida** como data URI base64 (~24 px). `""` si no hay imagen. La usa el frontend como placeholder pixelado mientras carga la real |
 | `imagenThumb` | string | **Nombre del fichero** de la imagen (no una URL). El frontend compone la URL real (ver §5). `""` si no hay imagen |
 | `precioDesde` | number | Precio "desde" en € (entero o decimal) |
+| `diasDisponibles` | string[] | Fechas con excursión, formato `YYYY-MM-DD` (**hoy → +15 días**). La galería las usa para el filtro por fecha (resalta días con disponibilidad) |
 
 ---
 
 ## 3) Detalle de una excursión — **completo**
 
 ```
-GET /mgwage/rest/infoexc/detalle?empresa=001&id=1&lang=es
+GET /mgwage/rest/infoexc/detalle?empresa=001&codexc=0030&lang=es
 ```
 
-**Parámetros:** `empresa` (query), `id` (query), `lang` (query).
+**Parámetros:** `empresa` (query), `codexc` (query), `lang` (query).
 
 **Respuesta `200`:**
 ```json
 {
   "id": 1,
-  "titulo": "Ruta por el Teide",
-  "entradilla": "Ascensión guiada al volcán más alto de España.",
-  "detalle": "Una experiencia única recorriendo los paisajes lunares del Parque Nacional del Teide. Incluye teleférico, guía especializado y seguro de montaña.",
-  "imagenThumb": "https://cdn.fuerteitaka.com/exc/1/thumb.webp",
-  "imagenes": [
-    "https://cdn.fuerteitaka.com/exc/1/foto-1.webp",
-    "https://cdn.fuerteitaka.com/exc/1/foto-2.webp",
-    "https://cdn.fuerteitaka.com/exc/1/foto-3.webp"
-  ],
-  "precioDesde": 45,
+  "codexc": "0030",
+  "titulo": "Excursión en catamarán",
+  "entradilla": "Con música, sol y buen ambiente a bordo de un catamarán.",
+  "detalle": "PCFET0NUWVBFIGh0bWw+CjxodG1s…",
+  "imagenThumb": "img0030-gal.webp",
+  "imagenes": ["img0030-001.webp", "img0030-002.webp", "img0030-003.webp"],
+  "precioDesde": 63,
   "diasDisponibles": ["2026-06-12", "2026-06-15", "2026-06-17", "2026-06-19"]
 }
 ```
 
 | Campo | Tipo | Notas |
 |---|---|---|
-| `id`, `titulo`, `entradilla`, `imagenLowres`, `imagenThumb`, `precioDesde` | — | Igual que en el listado |
-| `detalle` | string | Descripción larga, traducida según `lang` |
+| `id`, `codexc`, `titulo`, `entradilla`, `imagenThumb`, `precioDesde`, `diasDisponibles` | — | Igual que en el listado (`imagenThumb` = nombre de fichero) |
+| `detalle` | string | Descripción extendida: **documento HTML completo codificado en base64 (UTF-8)**. El frontend lo decodifica y lo renderiza en un **iframe aislado** (sandbox sin scripts) para no contaminar los estilos de la app. Traducido según `lang` |
 | `imagenes` | string[] | **Nombres de fichero** del carrusel (no URLs). La **primera** es la principal (LCP). El frontend compone cada URL como en §5 |
 | `diasDisponibles` | string[] | Fechas con excursión, formato `YYYY-MM-DD`. Basta con devolver las de **hoy → +15 días** (el calendario solo pinta 16 días) |
 
-> ⚠️ **Pendiente:** hoy `/detalle` y `/disponibilidad` devuelven datos de **esqueleto** (no fiables);
-> el frontend los sirve aún con el `mockInterceptor` hasta que el backend los cierre.
+> El detalle **no** incluye `imagenLowres` (el carrusel no usa LQIP por imagen).
+>
+> ⚠️ **Pendiente:** hoy `/disponibilidad` devuelve datos de **esqueleto** (no fiables); el frontend lo
+> sirve aún con el `mockInterceptor` hasta que el backend lo cierre. `/detalle` ya es real.
 
 ---
 
 ## 4) Disponibilidad de un día (precios y horarios)
 
 ```
-GET /mgwage/rest/infoexc/disponibilidad?empresa=001&id=1&fecha=2026-06-12
+GET /mgwage/rest/infoexc/disponibilidad?empresa=001&codexc=0030&fecha=2026-06-12
 ```
 
-**Parámetros:** `empresa` (query), `id` (query), `fecha` (query, `YYYY-MM-DD`).
+**Parámetros:** `empresa` (query), `codexc` (query), `fecha` (query, `YYYY-MM-DD`).
 No necesita `lang` (solo devuelve números y horas).
 
 **Respuesta `200`:**
@@ -192,6 +195,6 @@ Ejemplo: GET /descargas/emp102/img0030-gal.webp
 |---|---|---|---|---|
 | 1 | GET | `/info` | `empresa` | Marca de la empresa |
 | 2 | GET | `/excursiones` | `empresa`, `lang` | Listado ligero |
-| 3 | GET | `/detalle` | `empresa`, `id`, `lang` | Detalle completo |
-| 4 | GET | `/disponibilidad` | `empresa`, `id`, `fecha` | Precios y horarios del día |
+| 3 | GET | `/detalle` | `empresa`, `codexc`, `lang` | Detalle completo |
+| 4 | GET | `/disponibilidad` | `empresa`, `codexc`, `fecha` | Precios y horarios del día |
 | 5 | GET | `{descargasUrl}/emp{empresa}/{fichero}` | — | Fichero de imagen (estático) |

@@ -8,10 +8,11 @@ import { environment } from '../../../environments/environment';
 import { Carrusel } from './carrusel/carrusel';
 import { SelectorDias } from '../../shared/selector-dias/selector-dias';
 import { PreciosHorarios } from './precios-horarios/precios-horarios';
+import { ContenidoHtml } from '../../shared/contenido-html/contenido-html';
 
 @Component({
   selector: 'app-detalle',
-  imports: [RouterLink, Carrusel, SelectorDias, PreciosHorarios],
+  imports: [RouterLink, Carrusel, SelectorDias, PreciosHorarios, ContenidoHtml],
   templateUrl: './detalle.html',
   styleUrl: './detalle.scss',
 })
@@ -21,12 +22,13 @@ export class DetalleComponent {
   protected i18n = inject(I18nService);
 
   readonly empresa = this.empresaService.codigo;
-  readonly id = signal(Number(this.route.snapshot.paramMap.get('id')));
+  readonly codexc = signal(this.route.snapshot.paramMap.get('codexc') ?? '');
 
   fechaSeleccionada = signal<string | null>(null);
 
-  /** Carga reactiva de la excursión; se recarga sola si cambia el id o el idioma. */
+  /** Carga reactiva de la excursión; se recarga sola si cambia el codexc o el idioma. */
   excursion = httpResource<Excursion>(
-    () => `${environment.apiUrl}/detalle?empresa=${this.empresa()}&id=${this.id()}&lang=${this.i18n.idioma()}`,
+    () =>
+      `${environment.apiUrl}/detalle?empresa=${this.empresa()}&codexc=${this.codexc()}&lang=${this.i18n.idioma()}`,
   );
 }

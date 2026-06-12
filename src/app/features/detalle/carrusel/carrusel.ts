@@ -1,6 +1,6 @@
-import { Component, ElementRef, computed, input, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, computed, inject, input, signal, viewChild } from '@angular/core';
 import { ImagenProgresiva } from '../../../shared/imagen-progresiva/imagen-progresiva';
-import { placeholderLowres } from '../../../core/utils/imagen.util';
+import { ImagenesService } from '../../../core/services/imagenes';
 
 @Component({
   selector: 'app-carrusel',
@@ -9,10 +9,14 @@ import { placeholderLowres } from '../../../core/utils/imagen.util';
   styleUrl: './carrusel.scss',
 })
 export class Carrusel {
+  /** Nombres de fichero de las imágenes; la URL real se compone con `ImagenesService`. */
   imagenes = input.required<string[]>();
   alt = input<string>('');
 
-  slides = computed(() => this.imagenes().map((full) => ({ full, low: placeholderLowres(full) })));
+  private imagenesSvc = inject(ImagenesService);
+
+  /** URLs compuestas de cada imagen del carrusel. */
+  slides = computed(() => this.imagenes().map((nombre) => this.imagenesSvc.urlImagen(nombre)));
 
   private pista = viewChild<ElementRef<HTMLElement>>('pista');
   indiceActivo = signal(0);

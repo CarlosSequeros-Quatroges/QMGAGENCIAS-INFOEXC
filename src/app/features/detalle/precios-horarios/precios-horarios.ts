@@ -11,7 +11,7 @@ import { I18nService } from '../../../core/i18n/i18n';
 })
 export class PreciosHorarios {
   empresa = input.required<string>();
-  excursionId = input.required<number>();
+  codexc = input.required<string>();
   fecha = input<string | null>(null);
 
   protected i18n = inject(I18nService);
@@ -23,6 +23,6 @@ export class PreciosHorarios {
   disponibilidad = httpResource<Disponibilidad>(() => {
     const fecha = this.fecha();
     if (!fecha) return undefined;
-    return `${environment.apiUrl}/disponibilidad?empresa=${this.empresa()}&id=${this.excursionId()}&fecha=${fecha}`;
+    return `${environment.apiUrl}/disponibilidad?empresa=${this.empresa()}&codexc=${this.codexc()}&fecha=${fecha}`;
   });
 }

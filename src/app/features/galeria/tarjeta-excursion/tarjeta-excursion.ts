@@ -13,7 +13,7 @@ import { I18nService } from '../../../core/i18n/i18n';
 })
 export class TarjetaExcursionComponent {
   excursion = input.required<ExcursionResumen>();
-  verDetalle = output<number>();
+  verDetalle = output<string>();
 
   private imagenes = inject(ImagenesService);
   protected i18n = inject(I18nService);
@@ -22,6 +22,6 @@ export class TarjetaExcursionComponent {
   imagenUrl = computed(() => this.imagenes.urlImagen(this.excursion().imagenThumb));
 
   onTap(): void {
-    this.verDetalle.emit(this.excursion().id);
+    this.verDetalle.emit(this.excursion().codexc);
   }
 }

@@ -1,14 +1,8 @@
 <div class="carrusel">
   <div #pista class="carrusel-pista" (scroll)="onScroll()">
-    @for (slide of slides(); track slide.full; let i = $index) {
+    @for (slide of slides(); track slide; let i = $index) {
       <div class="carrusel-slide">
-        <app-imagen-progresiva
-          [src]="slide.full"
-          [placeholder]="slide.low"
-          [alt]="alt()"
-          [priority]="i === 0"
-          sizes="100vw"
-        />
+        <app-imagen-progresiva [src]="slide" [alt]="alt()" [priority]="i === 0" sizes="100vw" />
       </div>
     }
   </div>

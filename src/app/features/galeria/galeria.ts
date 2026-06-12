@@ -44,7 +44,7 @@ export class GaleriaComponent {
     this.fechaFiltro.set(null);
   }
 
-  verDetalle(id: number): void {
-    this.router.navigate([this.empresa(), 'excursion', id]);
+  verDetalle(codexc: string): void {
+    this.router.navigate([this.empresa(), 'excursion', codexc]);
   }
 }

@@ -11,7 +11,7 @@ export const routes: Routes = [
         loadComponent: () => import('./features/galeria/galeria').then((m) => m.GaleriaComponent),
       },
       {
-        path: 'excursion/:id',
+        path: 'excursion/:codexc',
         loadComponent: () => import('./features/detalle/detalle').then((m) => m.DetalleComponent),
       },
     ],
