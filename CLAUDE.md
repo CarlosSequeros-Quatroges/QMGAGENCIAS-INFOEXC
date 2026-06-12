@@ -53,10 +53,14 @@ npx serve -s dist/qMGAgencias-infoExc/browser -l 8080   # abrir http://localhost
 - **Imágenes**: ficheros estáticos en `${descargasUrl}/emp{empresa}/{nombreFichero}` (`environment.descargasUrl`).
   El listado/detalle traen el **nombre de fichero** (`imagenThumb`/`imagenes[]`) y el LQIP base64 (`imagenLowres`),
   no URLs. El frontend compone la URL en `core/services/imagenes.ts`.
-- **Estado del backend (parcial)**: la **galería** ya va al backend real (`/info`, `/excursiones`, imágenes).
-  `detalle` y `disponibilidad` siguen en **mock** (`core/interceptors/mock.interceptors.ts`) porque el backend
-  aún los da como esqueleto. Para pasarlos a real: borrar sus bloques del mock (o quitar el interceptor en
-  `app.config.ts`). ⚠️ `precioDesde` llega como **0** del backend (pendiente); la tarjeta oculta el precio si es 0.
+- **Estado del backend (parcial)**: **galería** y **detalle** ya van al backend real (`/info`, `/excursiones`,
+  `/detalle`, imágenes). Solo `/disponibilidad` sigue en **mock** (`core/interceptors/mock.interceptors.ts`)
+  porque el backend aún lo da como esqueleto. Para pasarlo a real: borrar su bloque del mock (o quitar el
+  interceptor en `app.config.ts`). ⚠️ `precioDesde` llega como **0** del backend (pendiente); la tarjeta oculta el precio si es 0.
+- **`detalle` (HTML base64)**: el campo `detalle` de `/detalle` es un **documento HTML completo en base64 (UTF-8)**.
+  `shared/contenido-html` lo decodifica y lo pinta en un **iframe con `sandbox` (sin scripts)** para aislar sus
+  estilos (`:root`/`body`/`<style>`) de la app; la altura se ajusta al contenido. El carrusel recibe `imagenes[]`
+  como **nombres de fichero** y compone la URL con `core/services/imagenes.ts`.
 - El mock **ignora `lang`** (contenido solo en español); el backend debe traducir título/entradilla/detalle.
 
 ## Decisiones clave (ya implementadas)
@@ -66,8 +70,9 @@ npx serve -s dist/qMGAgencias-infoExc/browser -l 8080   # abrir http://localhost
   ⚠️ En `NgOptimizedImage`, `sizes` solo admite valores responsive (vw), **nunca px** (error NG02952).
 - **Imagen progresiva** (`shared/imagen-progresiva`): miniatura pixelada (LQIP, `image-rendering: pixelated`)
   con pulso y crossfade a nítida. En la **galería** el LQIP es el `imagenLowres` (base64) del backend y la imagen
-  nítida es la URL del fichero (`NgOptimizedImage`). En el **carrusel del detalle** (aún en mock) el LQIP lo
-  deriva `core/utils/imagen.util.ts` (truco picsum). Sin foto → placeholder "sin foto" en la tarjeta.
+  nítida es la URL del fichero (`NgOptimizedImage`). El **carrusel del detalle** usa la URL del fichero sin LQIP
+  (el detalle no trae `imagenLowres`). Sin imagen o si la descarga falla → placeholder **"sin imagen"**
+  (cámara tachada, `shared/sin-imagen`).
 - **PWA**: `ngsw-config.json` cachea imágenes y tiene `dataGroup` para la API. Offline verificado.
 - **i18n**: 4 idiomas (ES/EN/DE/FR), sistema propio en `core/i18n` (sin librería, traducciones
   empaquetadas → offline). `I18nService.t('clave')` reactivo. Selector de **banderas SVG** (en
@@ -85,8 +90,8 @@ npx serve -s dist/qMGAgencias-infoExc/browser -l 8080   # abrir http://localhost
 
 ## Pendiente / próximos pasos
 
-- Conectar `detalle` y `disponibilidad` al **backend real** (quitar sus bloques del mock) cuando dejen de ser esqueleto.
-- Backend: servir `precioDesde` real (hoy 0) y los ficheros de imagen del detalle (`imagenes[]`).
+- Conectar `/disponibilidad` al **backend real** (quitar su bloque del mock) cuando deje de ser esqueleto.
+- Backend: servir `precioDesde` real (hoy 0).
 - Aviso de **nueva versión** con `SwUpdate` (complementa el service worker).
 - **Image loader** responsive de `NgOptimizedImage` cuando se decida el alojamiento de imágenes.
 - Cerrar el **branding** definitivo tras la reunión con el cliente.
