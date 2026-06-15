@@ -31,7 +31,7 @@ export class ContenidoHtml {
     // Angular: el aislamiento lo garantiza el sandbox del iframe, no el sanitizer.
     effect(() => {
       const el = this.iframe()?.nativeElement;
-      if (el) el.srcdoc = decodeBase64Utf8(this.base64());
+      if (el) el.srcdoc = sinScripts(decodeBase64Utf8(this.base64()));
     });
   }
 
@@ -50,4 +50,12 @@ function decodeBase64Utf8(b64: string): string {
   const binario = atob(b64);
   const bytes = Uint8Array.from(binario, (c) => c.charCodeAt(0));
   return new TextDecoder('utf-8').decode(bytes);
+}
+
+/**
+ * Elimina los `<script>` del HTML. El iframe ya va en sandbox sin `allow-scripts`
+ * (no se ejecutan), pero quitarlos evita el error de consola "Blocked script execution".
+ */
+function sinScripts(html: string): string {
+  return html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
 }

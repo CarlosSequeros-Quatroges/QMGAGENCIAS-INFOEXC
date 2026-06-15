@@ -13,13 +13,17 @@ import { I18nService } from '../../../core/i18n/i18n';
 })
 export class TarjetaExcursionComponent {
   excursion = input.required<ExcursionResumen>();
+  /** Marca la imagen como prioritaria (LCP): solo para las primeras tarjetas visibles. */
+  priority = input<boolean>(false);
   verDetalle = output<string>();
 
   private imagenes = inject(ImagenesService);
   protected i18n = inject(I18nService);
 
   /** URL del fichero de imagen ('' si la excursión no tiene foto). */
-  imagenUrl = computed(() => this.imagenes.urlImagen(this.excursion().imagenThumb));
+  imagenUrl = computed(() =>
+    this.imagenes.urlImagen(this.excursion().codexc, this.excursion().imagenThumb),
+  );
 
   onTap(): void {
     this.verDetalle.emit(this.excursion().codexc);

@@ -11,12 +11,15 @@ import { ImagenesService } from '../../../core/services/imagenes';
 export class Carrusel {
   /** Nombres de fichero de las imágenes; la URL real se compone con `ImagenesService`. */
   imagenes = input.required<string[]>();
+  codexc = input.required<string>();
   alt = input<string>('');
 
   private imagenesSvc = inject(ImagenesService);
 
   /** URLs compuestas de cada imagen del carrusel. */
-  slides = computed(() => this.imagenes().map((nombre) => this.imagenesSvc.urlImagen(nombre)));
+  slides = computed(() =>
+    this.imagenes().map((nombre) => this.imagenesSvc.urlImagen(this.codexc(), nombre)),
+  );
 
   private pista = viewChild<ElementRef<HTMLElement>>('pista');
   indiceActivo = signal(0);

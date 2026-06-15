@@ -1,19 +1,25 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, isDevMode } from '@angular/core';
-import { provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import {
+  provideRouter,
+  withPreloading,
+  PreloadAllModules,
+  withHashLocation,
+} from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 
 import { routes } from './app.routes';
-import { mockInterceptor } from './core/interceptors/mock.interceptors';
 import { provideServiceWorker } from '@angular/service-worker';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     // PreloadAllModules: precarga los chunks lazy (p. ej. el detalle) en segundo plano
-    // cuando el navegador está libre, para que la navegaciºón sea instantánea.
-    provideRouter(routes, withPreloading(PreloadAllModules)),
+    // cuando el navegador está libre, para que la navegación sea instantánea.
+    // withHashLocation: rutas tras '#' (p. ej. /infoexc/#/102). El servidor solo ve /infoexc/
+    // (sirve index.html) y nunca da 404 en deep links → no necesita fallback SPA (cosmoswebserver).
+    provideRouter(routes, withPreloading(PreloadAllModules), withHashLocation()),
     // fetch es el backend por defecto en Angular 22 (compatible con httpResource()).
-    provideHttpClient(withInterceptors([mockInterceptor])),
+    provideHttpClient(),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',

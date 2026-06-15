@@ -5,6 +5,8 @@ export interface Disponibilidad {
 
 export interface Horario {
   hora: string;
+  /** Zona opcional; si viene, el horario solo está disponible en ella. */
+  zona?: string;
   precioAdulto: number;
   precioNino: number;
   plazasLibres: number;

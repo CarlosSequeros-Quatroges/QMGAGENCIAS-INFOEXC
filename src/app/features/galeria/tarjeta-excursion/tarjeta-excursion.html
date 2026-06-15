@@ -5,6 +5,7 @@
         [src]="imagenUrl()"
         [placeholder]="excursion().imagenLowres || null"
         [alt]="excursion().titulo"
+        [priority]="priority()"
         sizes="(max-width: 600px) 100vw, 33vw"
       />
     } @else {
@@ -14,11 +15,15 @@
   <div class="tarjeta-contenido">
     <h2 class="tarjeta-titulo">{{ excursion().titulo }}</h2>
     <p class="tarjeta-entradilla">{{ excursion().entradilla }}</p>
+    <!--
+      PRECIO OCULTO a petición del cliente (por ahora no se muestra). Para reactivar, descomentar.
     @if (excursion().precioDesde > 0) {
       <div class="tarjeta-footer">
         <span class="precio-desde">{{ i18n.t('tarjeta.desde') }}</span>
         <span class="precio-valor">{{ excursion().precioDesde }}€</span>
       </div>
     }
+    -->
+
   </div>
 </button>

@@ -13,7 +13,7 @@
       <p>{{ i18n.t('detalle.error') }}</p>
     </div>
   } @else if (excursion.value(); as exc) {
-    <app-carrusel [imagenes]="exc.imagenes" [alt]="exc.titulo" />
+    <app-carrusel [codexc]="exc.codexc" [imagenes]="exc.imagenes" [alt]="exc.titulo" />
 
     <div class="detalle-contenido">
       <h1 class="detalle-titulo">{{ exc.titulo }}</h1>
@@ -29,7 +29,7 @@
             [(fechaSeleccionada)]="fechaSeleccionada"
           />
 
-          <h2 class="detalle-subtitulo">{{ i18n.t('detalle.precios') }}</h2>
+          <h2 class="detalle-subtitulo">{{ i18n.t('detalle.horarios') }}</h2>
           <app-precios-horarios
             [empresa]="empresa()"
             [codexc]="codexc()"
@@ -39,6 +39,7 @@
       } @placeholder {
         <div class="detalle-disponibilidad-placeholder"></div>
       }
+
     </div>
   }
 </div>

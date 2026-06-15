@@ -118,9 +118,6 @@ GET /mgwage/rest/infoexc/detalle?empresa=001&codexc=0030&lang=es
 | `diasDisponibles` | string[] | Fechas con excursión, formato `YYYY-MM-DD`. Basta con devolver las de **hoy → +15 días** (el calendario solo pinta 16 días) |
 
 > El detalle **no** incluye `imagenLowres` (el carrusel no usa LQIP por imagen).
->
-> ⚠️ **Pendiente:** hoy `/disponibilidad` devuelve datos de **esqueleto** (no fiables); el frontend lo
-> sirve aún con el `mockInterceptor` hasta que el backend lo cierre. `/detalle` ya es real.
 
 ---
 
@@ -138,9 +135,8 @@ No necesita `lang` (solo devuelve números y horas).
 {
   "fecha": "2026-06-12",
   "horarios": [
-    { "hora": "09:00", "precioAdulto": 45, "precioNino": 30, "plazasLibres": 12 },
-    { "hora": "12:00", "precioAdulto": 45, "precioNino": 30, "plazasLibres": 4 },
-    { "hora": "16:00", "precioAdulto": 38, "precioNino": 25, "plazasLibres": 20 }
+    { "hora": "09:00", "precioAdulto": 63, "precioNino": 40, "plazasLibres": 12 },
+    { "hora": "14:00", "zona": "TF SUR", "precioAdulto": 63, "precioNino": 40, "plazasLibres": 0 }
   ]
 }
 ```
@@ -149,9 +145,13 @@ No necesita `lang` (solo devuelve números y horas).
 |---|---|---|
 | `fecha` | string | Eco de la fecha solicitada (`YYYY-MM-DD`) |
 | `horarios[].hora` | string | Formato `HH:mm` (24 h) |
+| `horarios[].zona` | string? | **Opcional**. Si viene (no vacío), el frontend muestra "(Disponible solo en zona …)" junto a la hora; si no, no indica nada |
 | `horarios[].precioAdulto` | number | € |
 | `horarios[].precioNino` | number | € |
 | `horarios[].plazasLibres` | number | Entero. El frontend marca en rojo si ≤ 5 |
+
+> ⚠️ Por petición del cliente, el frontend **oculta precios y plazas** (solo muestra hora y, si aplica, la zona).
+> Los campos siguen viajando en la respuesta para reactivarlos en el futuro.
 
 ---
 

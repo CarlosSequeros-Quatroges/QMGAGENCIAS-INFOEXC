@@ -24,6 +24,7 @@
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
+            "baseHref": "/infoexc/",
             "assets": [
               {
                 "glob": "**/*",
@@ -71,7 +72,8 @@
             },
             "development": {
               "buildTarget": "qMGAgencias-infoExc:build:development",
-              "proxyConfig": "proxy.conf.json"
+              "proxyConfig": "proxy.conf.json",
+              "servePath": "/infoexc"
             }
           },
           "defaultConfiguration": "development"

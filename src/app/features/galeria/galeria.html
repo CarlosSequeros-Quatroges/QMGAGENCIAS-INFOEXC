@@ -40,8 +40,12 @@
     }
 
     <div class="galeria-grid">
-      @for (excursion of excursionesVisibles(); track excursion.id) {
-        <app-tarjeta-excursion [excursion]="excursion" (verDetalle)="verDetalle($event)" />
+      @for (excursion of excursionesVisibles(); track excursion.id; let i = $index) {
+        <app-tarjeta-excursion
+          [excursion]="excursion"
+          [priority]="i === 0"
+          (verDetalle)="verDetalle($event)"
+        />
       }
     </div>
   }

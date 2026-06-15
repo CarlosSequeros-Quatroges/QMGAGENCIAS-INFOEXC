@@ -5,10 +5,13 @@ cuando cambien decisiones importantes.)
 
 ## Qué es
 
-Webapp para **clientes de hotel** que consultan las excursiones disponibles. Se entra por un **QR**
-con una URL `/{empresa}` (código de **3 dígitos**, validado con `^\d{3}$` en `empresaGuard`).
-Flujo: **galería** → **detalle** (carrusel + selector de días hoy→+15 → precios adulto/niño y
-horarios del día). Orientada a **móvil** primero, también tablet y escritorio.
+Webapp para **clientes de hotel** que consultan las excursiones disponibles. Se entra por un **QR**.
+El **router usa hash** (`withHashLocation`), así que la URL es `…/infoexc/#/{empresa}` (código de
+**3 dígitos**, validado con `^\d{3}$` en `empresaGuard`). ⚠️ **El QR debe codificar la URL CON `#/`**
+(p. ej. `http://host:puerto/infoexc/#/102`). Se usa hash porque el servidor (cosmoswebserver/Jetty) no
+hace fallback SPA: con `#` solo ve `/infoexc/` y nunca da 404 en deep links.
+Flujo: **galería** → **detalle** (carrusel + selector de días hoy→+15 → horarios del día).
+Orientada a **móvil** primero, también tablet y escritorio.
 
 ## Stack
 
@@ -20,7 +23,7 @@ horarios del día). Orientada a **móvil** primero, también tablet y escritorio
 
 ```bash
 npm install
-npm start          # dev server en http://localhost:4200  → abrir /123 (empresa de 3 dígitos)
+npm start          # dev server → abrir http://localhost:4200/infoexc/123 (empresa de 3 dígitos)
 npm run build      # build de producción (genera el service worker)
 npm run lint
 ```
@@ -30,15 +33,24 @@ ya cableado en `angular.json` → serve:development). Las URLs en dev son **rela
 (`environment.development.ts`) y `ng serve` las reenvía al backend; cambia el `target` del proxy si
 el backend cambia de host. En **producción** se usan las URLs absolutas de `environment.ts`.
 
-Probar la **PWA / offline** (el SW solo corre en build de producción, NO en `ng serve`):
+La app se sirve **bajo `/infoexc/`** (hay otra webapp en `/traslados`): `baseHref: "/infoexc/"` está en
+`angular.json` (build → `options`, común a dev y prod), por lo que el router antepone `/infoexc/` solo
+(**no** hay que añadirlo a las rutas) y los assets cuelgan de ahí. En dev, además, `serve:development`
+tiene `servePath: "/infoexc"` para imitar a prod. Si cambia la ruta base de despliegue, ajústalo ahí.
+En **producción** el servidor debe servir el build bajo `/infoexc/` y hacer **fallback SPA** a
+`/infoexc/index.html` para las rutas profundas.
+
+Probar la **PWA / offline** (el SW solo corre en build de producción, NO en `ng serve`). Como el build
+usa `baseHref /infoexc/`, hay que servirlo bajo esa ruta:
 ```bash
 npm run build
-npx serve -s dist/qMGAgencias-infoExc/browser -l 8080   # abrir http://localhost:8080/123
+mkdir -p dist/pwa/infoexc && cp -r dist/qMGAgencias-infoExc/browser/* dist/pwa/infoexc/
+npx serve dist/pwa -l 8080   # abrir http://localhost:8080/infoexc/123
 ```
 
 ## Estructura
 
-- `src/app/core/` — `models/`, `services/`, `i18n/`, `interceptors/`, `guards/`, `mocks/`, `utils/`.
+- `src/app/core/` — `models/`, `services/`, `i18n/`, `guards/`, `utils/`.
 - `src/app/features/` — `galeria/`, `detalle/` (con `carrusel/`, `selector-dias/`, `precios-horarios/`), `error/`.
 - `src/app/shared/` — `header/`, `selector-idioma/`, `imagen-progresiva/`.
 - `docs/api-contract.md` — **contrato de API** (fuente de verdad para el backend).
@@ -53,15 +65,14 @@ npx serve -s dist/qMGAgencias-infoExc/browser -l 8080   # abrir http://localhost
 - **Imágenes**: ficheros estáticos en `${descargasUrl}/emp{empresa}/{nombreFichero}` (`environment.descargasUrl`).
   El listado/detalle traen el **nombre de fichero** (`imagenThumb`/`imagenes[]`) y el LQIP base64 (`imagenLowres`),
   no URLs. El frontend compone la URL en `core/services/imagenes.ts`.
-- **Estado del backend (parcial)**: **galería** y **detalle** ya van al backend real (`/info`, `/excursiones`,
-  `/detalle`, imágenes). Solo `/disponibilidad` sigue en **mock** (`core/interceptors/mock.interceptors.ts`)
-  porque el backend aún lo da como esqueleto. Para pasarlo a real: borrar su bloque del mock (o quitar el
-  interceptor en `app.config.ts`). ⚠️ `precioDesde` llega como **0** del backend (pendiente); la tarjeta oculta el precio si es 0.
+- **Estado del backend**: **todo va al backend real** (`/info`, `/excursiones`, `/detalle`, `/disponibilidad`,
+  imágenes). **Ya no hay mock** (el `mockInterceptor` se eliminó; `provideHttpClient()` sin interceptores).
+  ⚠️ `precioDesde` llega como **0** del backend (pendiente); la tarjeta oculta el precio si es 0.
 - **`detalle` (HTML base64)**: el campo `detalle` de `/detalle` es un **documento HTML completo en base64 (UTF-8)**.
   `shared/contenido-html` lo decodifica y lo pinta en un **iframe con `sandbox` (sin scripts)** para aislar sus
   estilos (`:root`/`body`/`<style>`) de la app; la altura se ajusta al contenido. El carrusel recibe `imagenes[]`
   como **nombres de fichero** y compone la URL con `core/services/imagenes.ts`.
-- El mock **ignora `lang`** (contenido solo en español); el backend debe traducir título/entradilla/detalle.
+- **i18n del contenido**: el backend traduce título/entradilla/detalle según `lang`.
 
 ## Decisiones clave (ya implementadas)
 
@@ -82,6 +93,10 @@ npx serve -s dist/qMGAgencias-infoExc/browser -l 8080   # abrir http://localhost
   (`EmpresaModel` solo lleva `codigo` y `nombre`). ⚠️ El branding actual (logo Fuerte Itaka, rojo
   **#C20E1A**) es **PROVISIONAL**, pendiente de confirmar en reunión con el cliente.
 - `@Service()` (Angular 22) es válido: equivale a `@Injectable({ providedIn: 'root' })`. No es un error.
+- **Precios y cupos OCULTOS** a petición del cliente (comentados en el HTML, código intacto para reactivar):
+  el precio de la tarjeta en `tarjeta-excursion.html`, y dentro de `precios-horarios.html` los precios y las
+  plazas. En el **detalle SÍ se muestran días y horas** (selector de día + lista de horas); el subtítulo usa
+  `detalle.horarios` (en vez de `detalle.precios`). El **filtro por fecha de la galería** también se mantiene.
 
 ## Convenciones
 
@@ -90,8 +105,16 @@ npx serve -s dist/qMGAgencias-infoExc/browser -l 8080   # abrir http://localhost
 
 ## Pendiente / próximos pasos
 
-- Conectar `/disponibilidad` al **backend real** (quitar su bloque del mock) cuando deje de ser esqueleto.
-- Backend: servir `precioDesde` real (hoy 0).
-- Aviso de **nueva versión** con `SwUpdate` (complementa el service worker).
-- **Image loader** responsive de `NgOptimizedImage` cuando se decida el alojamiento de imágenes.
-- Cerrar el **branding** definitivo tras la reunión con el cliente.
+- Cerrar el **branding** definitivo (logo + `--color-acento`) tras la reunión con el cliente. **Único pendiente real.**
+- _Opcional_: aviso de **nueva versión** con `SwUpdate` (mejora de la PWA).
+- _Opcional_: que una empresa/`codexc` con formato válido pero **inexistente** (backend 404) vaya a `/error`
+  en vez de mostrar el error genérico de carga.
+
+### Limitaciones asumidas (no requieren acción en el frontend)
+
+- Las imágenes de `/descargas` llegan con `Content-Type: text/html` (Jetty no las mapea como `image/webp`).
+  Se renderizan bien por _content sniffing_ (no hay `nosniff`).
+- `NgOptimizedImage` sin `IMAGE_LOADER` responsive: el backend ya sirve una miniatura ligera (`*-gal.webp`,
+  ~15 KB) para la galería y la imagen completa para el carrusel, así que **ya está optimizado** para este
+  alojamiento (lazy-load, prioridad en el LCP, sin _layout shift_, LQIP, WebP, caché del SW). Un loader
+  responsive (`srcset` por ancho) solo aportaría si el backend ofreciera **redimensionado por URL**.

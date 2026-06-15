@@ -13,6 +13,17 @@
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
 }
 
+.cab-logo-link {
+  display: inline-flex;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-acento);
+    outline-offset: 3px;
+  }
+}
+
 .cab-logo {
   height: 32px;
   width: auto;

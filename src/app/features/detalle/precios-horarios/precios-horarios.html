@@ -13,6 +13,12 @@
     @for (h of disp.horarios; track h.hora) {
       <li class="ph-fila">
         <span class="ph-hora">{{ h.hora }}</span>
+        @if (h.zona?.trim()) {
+          <span class="ph-zona">({{ i18n.t('precios.soloZona') }} {{ h.zona }})</span>
+        }
+        <!--
+          PRECIOS Y CUPOS OCULTOS a petición del cliente (se muestra solo la hora).
+          Para reactivar, descomentar.
         <span class="ph-precios">
           <span class="ph-precio"><small>{{ i18n.t('precios.adulto') }}</small> {{ h.precioAdulto }}€</span>
           <span class="ph-precio"><small>{{ i18n.t('precios.nino') }}</small> {{ h.precioNino }}€</span>
@@ -20,6 +26,7 @@
         <span class="ph-plazas" [class.pocas]="h.plazasLibres <= 5">
           {{ h.plazasLibres }} {{ i18n.t('precios.plazas') }}
         </span>
+        -->
       </li>
     }
   </ul>

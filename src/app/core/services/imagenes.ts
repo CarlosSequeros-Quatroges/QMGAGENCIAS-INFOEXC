@@ -12,8 +12,8 @@ export class ImagenesService {
    * Esquema: `${descargasUrl}/emp{codigoEmpresa}/{nombreFichero}`.
    * Devuelve '' si la excursión no tiene imagen (nombre de fichero vacío).
    */
-  urlImagen(nombreFichero: string): string {
+  urlImagen(codexc: string, nombreFichero: string): string {
     if (!nombreFichero) return '';
-    return `${environment.descargasUrl}/emp${this.empresa.codigo()}/${nombreFichero}`;
+    return `${environment.descargasUrl}/emp${this.empresa.codigo()}/exc${codexc}/${nombreFichero}`;
   }
 }
