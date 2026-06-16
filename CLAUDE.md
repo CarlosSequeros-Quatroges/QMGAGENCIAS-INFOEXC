@@ -6,9 +6,10 @@ cuando cambien decisiones importantes.)
 ## Qué es
 
 Webapp para **clientes de hotel** que consultan las excursiones disponibles. Se entra por un **QR**.
-El **router usa hash** (`withHashLocation`), así que la URL es `…/infoexc/#/{empresa}` (código de
-**3 dígitos**, validado con `^\d{3}$` en `empresaGuard`). ⚠️ **El QR debe codificar la URL CON `#/`**
-(p. ej. `http://host:puerto/infoexc/#/102`). Se usa hash porque el servidor (cosmoswebserver/Jetty) no
+El **router usa hash** (`withHashLocation`), así que la URL es `…/infoexc/#/{empresa}/{codtour}`: empresa
+(código de **3 dígitos**, validado con `^\d{3}$` en `empresaGuard`) + **touroperador** (`codtour`). El
+`empresaGuard` guarda ambos en `EmpresaService` (`setContexto`). ⚠️ **El QR debe codificar la URL CON `#/`**
+(p. ej. `http://host:puerto/infoexc/#/102/TO01`). Se usa hash porque el servidor (cosmoswebserver/Jetty) no
 hace fallback SPA: con `#` solo ve `/infoexc/` y nunca da 404 en deep links.
 Flujo: **galería** → **detalle** (carrusel + selector de días hoy→+15 → horarios del día).
 Orientada a **móvil** primero, también tablet y escritorio.
@@ -28,10 +29,13 @@ npm run build      # build de producción (genera el service worker)
 npm run lint
 ```
 
-El backend está en **otro host**, así que en dev se usa el **proxy de Angular** (`proxy.conf.json`,
-ya cableado en `angular.json` → serve:development). Las URLs en dev son **relativas**
-(`environment.development.ts`) y `ng serve` las reenvía al backend; cambia el `target` del proxy si
-el backend cambia de host. En **producción** se usan las URLs absolutas de `environment.ts`.
+**Configuración del backend en runtime** (`public/config_cosmos.json`): las URLs `apiUrl` y `descargasUrl`
+**no** se compilan en el bundle; se cargan de ese JSON **al iniciar la app** (`ConfigService` +
+`APP_INITIALIZER` en `app.config.ts`), para poder **cambiar de servidor sin recompilar**. El fichero
+versionado trae URLs **relativas** (`/mgwage/rest/infoexc`, `/descargas`) para que en dev funcione el
+**proxy** (`proxy.conf.json`, cableado en serve:development). ⚠️ **En el despliegue hay que editar
+`/infoexc/config_cosmos.json`** con las URLs **absolutas** del backend (p. ej. `http://192.168.1.51:8094/...`).
+El SW lo cachea con estrategia *freshness* (online coge el último, offline tira de caché).
 
 La app se sirve **bajo `/infoexc/`** (hay otra webapp en `/traslados`): `baseHref: "/infoexc/"` está en
 `angular.json` (build → `options`, común a dev y prod), por lo que el router antepone `/infoexc/` solo
@@ -57,10 +61,12 @@ npx serve dist/pwa -l 8080   # abrir http://localhost:8080/infoexc/123
 
 ## Backend / API
 
-- URL base: **prod** en `environment.ts` (absoluta, `http://192.168.1.51:8094/mgwage/rest/infoexc`);
-  **dev** en `environment.development.ts` (relativa, `/mgwage/rest/infoexc`) reenviada por `proxy.conf.json`.
-- **Estilo query-param**: empresa, id y fecha viajan como query (`?empresa=001&id=1&lang=es&fecha=YYYY-MM-DD`),
-  no como segmentos de ruta. Idioma vía `&lang=` (`es|en|de|fr`).
+- URL base: en **runtime** desde `public/config_cosmos.json` (`apiUrl`/`descargasUrl`), cargado por
+  `ConfigService` en el `APP_INITIALIZER`. Versionado con URLs **relativas** (dev + proxy); en despliegue
+  se editan a las **absolutas** del backend. Ver "Configuración del backend en runtime" arriba.
+- **Estilo query-param**: empresa, codtour, codexc y fecha viajan como query
+  (`?empresa=001&codtour=TO01&codexc=0030&lang=es&fecha=YYYY-MM-DD`), no como segmentos de ruta.
+  **`codtour`** (touroperador) va en las **4** llamadas. Idioma vía `&lang=` (`es|en|de|fr`).
 - Endpoints: `/info`, `/excursiones`, `/detalle`, `/disponibilidad`. Ver `docs/api-contract.md` para JSON exacto.
 - **Imágenes**: ficheros estáticos en `${descargasUrl}/emp{empresa}/{nombreFichero}` (`environment.descargasUrl`).
   El listado/detalle traen el **nombre de fichero** (`imagenThumb`/`imagenes[]`) y el LQIP base64 (`imagenLowres`),
@@ -88,10 +94,13 @@ npx serve dist/pwa -l 8080   # abrir http://localhost:8080/infoexc/123
 - **i18n**: 4 idiomas (ES/EN/DE/FR), sistema propio en `core/i18n` (sin librería, traducciones
   empaquetadas → offline). `I18nService.t('clave')` reactivo. Selector de **banderas SVG** (en
   `public/flags/`, NO emojis porque no renderizan en Windows) en el header. Días localizados con `Intl`.
-- **Branding**: el **logo** es un asset fijo del frontend (`public/fuerte-itaka-logo.png`, servido en la raíz) y el
-  **color de acento** es fijo en la variable CSS `--color-acento` (`styles.scss`). NO viajan en `/info`
-  (`EmpresaModel` solo lleva `codigo` y `nombre`). ⚠️ El branding actual (logo Fuerte Itaka, rojo
-  **#C20E1A**) es **PROVISIONAL**, pendiente de confirmar en reunión con el cliente.
+- **Branding**: el **logo** (empresa) es un asset fijo del frontend (`public/fuerte-itaka-logo.png`) y el
+  **color de acento** es fijo en `--color-acento` (`styles.scss`); el **logo y el color NO viajan** en `/info`.
+  `EmpresaModel` lleva `codigo`, `nombre`, `codigoTour` y `nombreTour` (eco del touroperador). ⚠️ El branding
+  actual (logo Fuerte Itaka, rojo **#C20E1A**) es **PROVISIONAL**, pendiente de confirmar con el cliente.
+- **Logo del touroperador**: el header muestra, junto al logo fijo, `public/tour{empresa}-{codtour}.png`
+  (compuesto en `header.ts` con los códigos de la ruta; `alt` = `nombreTour` de `/info`). Si el fichero no
+  existe, se **oculta** (handler `(error)`).
 - `@Service()` (Angular 22) es válido: equivale a `@Injectable({ providedIn: 'root' })`. No es un error.
 - **Precios y cupos OCULTOS** a petición del cliente (comentados en el HTML, código intacto para reactivar):
   el precio de la tarjeta en `tarjeta-excursion.html`, y dentro de `precios-horarios.html` los precios y las
@@ -106,15 +115,15 @@ npx serve dist/pwa -l 8080   # abrir http://localhost:8080/infoexc/123
 ## Pendiente / próximos pasos
 
 - Cerrar el **branding** definitivo (logo + `--color-acento`) tras la reunión con el cliente. **Único pendiente real.**
-- _Opcional_: aviso de **nueva versión** con `SwUpdate` (mejora de la PWA).
-- _Opcional_: que una empresa/`codexc` con formato válido pero **inexistente** (backend 404) vaya a `/error`
+- *Opcional*: aviso de **nueva versión** con `SwUpdate` (mejora de la PWA).
+- *Opcional*: que una empresa/`codexc` con formato válido pero **inexistente** (backend 404) vaya a `/error`
   en vez de mostrar el error genérico de carga.
 
 ### Limitaciones asumidas (no requieren acción en el frontend)
 
 - Las imágenes de `/descargas` llegan con `Content-Type: text/html` (Jetty no las mapea como `image/webp`).
-  Se renderizan bien por _content sniffing_ (no hay `nosniff`).
+  Se renderizan bien por *content sniffing* (no hay `nosniff`).
 - `NgOptimizedImage` sin `IMAGE_LOADER` responsive: el backend ya sirve una miniatura ligera (`*-gal.webp`,
   ~15 KB) para la galería y la imagen completa para el carrusel, así que **ya está optimizado** para este
-  alojamiento (lazy-load, prioridad en el LCP, sin _layout shift_, LQIP, WebP, caché del SW). Un loader
+  alojamiento (lazy-load, prioridad en el LCP, sin *layout shift*, LQIP, WebP, caché del SW). Un loader
   responsive (`srcset` por ancho) solo aportaría si el backend ofreciera **redimensionado por URL**.

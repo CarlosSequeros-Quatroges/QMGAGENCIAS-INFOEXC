@@ -19,6 +19,8 @@ export const TRADUCCIONES: Record<Idioma, Diccionario> = {
   es: {
     'galeria.cargando': 'Cargando excursiones…',
     'galeria.error': 'No se han podido cargar las excursiones. Inténtalo de nuevo.',
+    'galeria.sinExcursiones':
+      'En este momento no hay excursiones disponibles. Por favor, contacta con tu guía.',
     'galeria.filtrarFecha': 'Filtra por fecha',
     'galeria.verTodas': 'Ver todas',
     'tarjeta.desde': 'desde',
@@ -41,6 +43,8 @@ export const TRADUCCIONES: Record<Idioma, Diccionario> = {
   en: {
     'galeria.cargando': 'Loading excursions…',
     'galeria.error': 'The excursions could not be loaded. Please try again.',
+    'galeria.sinExcursiones':
+      'There are no excursions available at the moment. Please contact your guide.',
     'galeria.filtrarFecha': 'Filter by date',
     'galeria.verTodas': 'Show all',
     'tarjeta.desde': 'from',
@@ -63,6 +67,8 @@ export const TRADUCCIONES: Record<Idioma, Diccionario> = {
   de: {
     'galeria.cargando': 'Ausflüge werden geladen…',
     'galeria.error': 'Die Ausflüge konnten nicht geladen werden. Bitte versuchen Sie es erneut.',
+    'galeria.sinExcursiones':
+      'Derzeit sind keine Ausflüge verfügbar. Bitte wenden Sie sich an Ihren Reiseleiter.',
     'galeria.filtrarFecha': 'Nach Datum filtern',
     'galeria.verTodas': 'Alle anzeigen',
     'tarjeta.desde': 'ab',
@@ -86,6 +92,8 @@ export const TRADUCCIONES: Record<Idioma, Diccionario> = {
   fr: {
     'galeria.cargando': 'Chargement des excursions…',
     'galeria.error': 'Les excursions n’ont pas pu être chargées. Veuillez réessayer.',
+    'galeria.sinExcursiones':
+      'Aucune excursion n’est disponible pour le moment. Veuillez contacter votre guide.',
     'galeria.filtrarFecha': 'Filtrer par date',
     'galeria.verTodas': 'Voir toutes',
     'tarjeta.desde': 'à partir de',

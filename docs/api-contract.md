@@ -6,12 +6,14 @@ funciona sin cambios: basta con desactivar el `mockInterceptor`
 
 ## Convenciones generales
 
-- **Base URL:** `/mgwage/rest/infoexc` (configurable en `environment.apiUrl`; en dev:
-  `http://localhost:3000/mgwage/rest/infoexc`).
-- **Parámetros por query string:** todos los parámetros (incluida la empresa, el id y la fecha)
-  viajan como **query params**, no como segmentos de ruta.
+- **Base URL:** se carga en runtime de `public/config_cosmos.json` (`apiUrl`); p. ej.
+  `http://192.168.1.51:8094/mgwage/rest/infoexc`.
+- **Parámetros por query string:** todos los parámetros (empresa, codtour, codexc, fecha) viajan
+  como **query params**, no como segmentos de ruta.
 - **`empresa`:** código de **3 dígitos** del QR (query param `?empresa=`). El frontend valida
   `^\d{3}$` antes de llamar.
+- **`codtour`:** código del **touroperador** (segundo parámetro de la ruta `/{empresa}/{codtour}`).
+  Viaja en **todas** las llamadas (`&codtour=`).
 - **Método:** todos **GET**.
 - **Content-Type:** `application/json; charset=utf-8`.
 - **Idioma:** parámetro de query **`&lang=`** con valores `es | en | de | fr` (por defecto `es`).
@@ -26,10 +28,10 @@ funciona sin cambios: basta con desactivar el `mockInterceptor`
 ## 1) Datos de marca de la empresa
 
 ```
-GET /mgwage/rest/infoexc/info?empresa=001
+GET /mgwage/rest/infoexc/info?empresa=001&codtour=TO01
 ```
 
-**Parámetros:** `empresa` (query).
+**Parámetros:** `empresa` (query), `codtour` (query).
 
 **Respuesta `200`:**
 ```json
@@ -52,10 +54,10 @@ GET /mgwage/rest/infoexc/info?empresa=001
 ## 2) Listado de excursiones (galería) — **ligero**
 
 ```
-GET /mgwage/rest/infoexc/excursiones?empresa=001&lang=es
+GET /mgwage/rest/infoexc/excursiones?empresa=001&codtour=TO01&lang=es
 ```
 
-**Parámetros:** `empresa` (query), `lang` (query).
+**Parámetros:** `empresa` (query), `codtour` (query), `lang` (query).
 
 **Respuesta `200`:** array de objetos **ligeros** (la galería solo necesita estos campos →
 menos datos, carga más rápida):
@@ -90,10 +92,10 @@ menos datos, carga más rápida):
 ## 3) Detalle de una excursión — **completo**
 
 ```
-GET /mgwage/rest/infoexc/detalle?empresa=001&codexc=0030&lang=es
+GET /mgwage/rest/infoexc/detalle?empresa=001&codtour=TO01&codexc=0030&lang=es
 ```
 
-**Parámetros:** `empresa` (query), `codexc` (query), `lang` (query).
+**Parámetros:** `empresa` (query), `codtour` (query), `codexc` (query), `lang` (query).
 
 **Respuesta `200`:**
 ```json
@@ -124,10 +126,10 @@ GET /mgwage/rest/infoexc/detalle?empresa=001&codexc=0030&lang=es
 ## 4) Disponibilidad de un día (precios y horarios)
 
 ```
-GET /mgwage/rest/infoexc/disponibilidad?empresa=001&codexc=0030&fecha=2026-06-12
+GET /mgwage/rest/infoexc/disponibilidad?empresa=001&codtour=TO01&codexc=0030&fecha=2026-06-12
 ```
 
-**Parámetros:** `empresa` (query), `codexc` (query), `fecha` (query, `YYYY-MM-DD`).
+**Parámetros:** `empresa` (query), `codtour` (query), `codexc` (query), `fecha` (query, `YYYY-MM-DD`).
 No necesita `lang` (solo devuelve números y horas).
 
 **Respuesta `200`:**
@@ -193,8 +195,8 @@ Ejemplo: GET /descargas/emp102/img0030-gal.webp
 
 | # | Método | Ruta | Query | Devuelve |
 |---|---|---|---|---|
-| 1 | GET | `/info` | `empresa` | Marca de la empresa |
-| 2 | GET | `/excursiones` | `empresa`, `lang` | Listado ligero |
-| 3 | GET | `/detalle` | `empresa`, `codexc`, `lang` | Detalle completo |
-| 4 | GET | `/disponibilidad` | `empresa`, `codexc`, `fecha` | Precios y horarios del día |
+| 1 | GET | `/info` | `empresa`, `codtour` | Marca de la empresa |
+| 2 | GET | `/excursiones` | `empresa`, `codtour`, `lang` | Listado ligero |
+| 3 | GET | `/detalle` | `empresa`, `codtour`, `codexc`, `lang` | Detalle completo |
+| 4 | GET | `/disponibilidad` | `empresa`, `codtour`, `codexc`, `fecha` | Precios y horarios del día |
 | 5 | GET | `{descargasUrl}/emp{empresa}/{fichero}` | — | Fichero de imagen (estático) |

@@ -4,7 +4,7 @@ import { httpResource } from '@angular/common/http';
 import { Excursion } from '../../core/models/excursion.model';
 import { EmpresaService } from '../../core/services/empresa';
 import { I18nService } from '../../core/i18n/i18n';
-import { environment } from '../../../environments/environment';
+import { ConfigService } from '../../core/services/config';
 import { Carrusel } from './carrusel/carrusel';
 import { SelectorDias } from '../../shared/selector-dias/selector-dias';
 import { PreciosHorarios } from './precios-horarios/precios-horarios';
@@ -20,8 +20,10 @@ export class DetalleComponent {
   private route = inject(ActivatedRoute);
   private empresaService = inject(EmpresaService);
   protected i18n = inject(I18nService);
+  private config = inject(ConfigService);
 
   readonly empresa = this.empresaService.codigo;
+  readonly codtour = this.empresaService.codtour;
   readonly codexc = signal(this.route.snapshot.paramMap.get('codexc') ?? '');
 
   fechaSeleccionada = signal<string | null>(null);
@@ -29,6 +31,6 @@ export class DetalleComponent {
   /** Carga reactiva de la excursión; se recarga sola si cambia el codexc o el idioma. */
   excursion = httpResource<Excursion>(
     () =>
-      `${environment.apiUrl}/detalle?empresa=${this.empresa()}&codexc=${this.codexc()}&lang=${this.i18n.idioma()}`,
+      `${this.config.apiUrl}/detalle?empresa=${this.empresa()}&codtour=${this.codtour()}&codexc=${this.codexc()}&lang=${this.i18n.idioma()}`,
   );
 }

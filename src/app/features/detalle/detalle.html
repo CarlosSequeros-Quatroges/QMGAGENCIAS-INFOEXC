@@ -1,5 +1,5 @@
 <div class="detalle-page">
-  <a class="volver" [routerLink]="['/', empresa()]">‹ {{ i18n.t('detalle.volver') }}</a>
+  <a class="volver" [routerLink]="['/', empresa(), codtour()]">‹ {{ i18n.t('detalle.volver') }}</a>
 
   @if (excursion.isLoading()) {
     <div class="detalle-skeleton">
@@ -32,6 +32,7 @@
           <h2 class="detalle-subtitulo">{{ i18n.t('detalle.horarios') }}</h2>
           <app-precios-horarios
             [empresa]="empresa()"
+            [codtour]="codtour()"
             [codexc]="codexc()"
             [fecha]="fechaSeleccionada()"
           />

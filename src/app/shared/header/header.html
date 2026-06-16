@@ -1,8 +1,22 @@
 @if (branding.value(); as empresa) {
   <header class="cab">
-    <a class="cab-logo-link" [routerLink]="['/', empresa.codigo]" [attr.aria-label]="empresa.nombre">
-      <img class="cab-logo" src="fuerte-itaka-logo.png" [alt]="empresa.nombre" />
-    </a>
+    <div class="cab-logos">
+      <a
+        class="cab-logo-link"
+        [routerLink]="['/', empresa.codigo, codtour()]"
+        [attr.aria-label]="empresa.nombre"
+      >
+        <img class="cab-logo" src="fuerte-itaka-logo.png" [alt]="empresa.nombre" />
+      </a>
+      @if (mostrarLogoTour()) {
+        <img
+          class="cab-logo-tour"
+          [src]="logoTour()"
+          [alt]="empresa.nombreTour"
+          (error)="onErrorLogoTour()"
+        />
+      }
+    </div>
     <app-selector-idioma />
   </header>
 } @else if (branding.isLoading()) {

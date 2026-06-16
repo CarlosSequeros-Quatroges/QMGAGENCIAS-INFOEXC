@@ -3,12 +3,13 @@ import { httpResource } from '@angular/common/http';
 import { ExcursionResumen } from '../models/excursion.model';
 import { EmpresaService } from './empresa';
 import { I18nService } from '../i18n/i18n';
-import { environment } from '../../../environments/environment';
+import { ConfigService } from './config';
 
 @Service()
 export class ExcursionesService {
   private empresa = inject(EmpresaService);
   private i18n = inject(I18nService);
+  private config = inject(ConfigService);
 
   /**
    * Listado ligero de excursiones. Reactivo a empresa e idioma: se recarga solo si cambian.
@@ -18,7 +19,7 @@ export class ExcursionesService {
     () => {
       const codigo = this.empresa.codigo();
       return codigo
-        ? `${environment.apiUrl}/excursiones?empresa=${codigo}&lang=${this.i18n.idioma()}`
+        ? `${this.config.apiUrl}/excursiones?empresa=${codigo}&codtour=${this.empresa.codtour()}&lang=${this.i18n.idioma()}`
         : undefined;
     },
     { defaultValue: [] },

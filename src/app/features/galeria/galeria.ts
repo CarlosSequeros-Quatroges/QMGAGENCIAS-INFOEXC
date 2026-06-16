@@ -19,6 +19,7 @@ export class GaleriaComponent {
   protected i18n = inject(I18nService);
 
   readonly empresa = this.empresaService.codigo;
+  readonly codtour = this.empresaService.codtour;
   readonly excursiones = this.excursionesService.lista;
 
   /** Fecha por la que se filtra la galería (null = sin filtro, se ven todas). */
@@ -45,6 +46,6 @@ export class GaleriaComponent {
   }
 
   verDetalle(codexc: string): void {
-    this.router.navigate([this.empresa(), 'excursion', codexc]);
+    this.router.navigate([this.empresa(), this.codtour(), 'excursion', codexc]);
   }
 }

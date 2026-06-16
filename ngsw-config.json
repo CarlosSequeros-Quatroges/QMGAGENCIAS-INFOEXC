@@ -36,6 +36,16 @@
   ],
   "dataGroups": [
     {
+      "name": "config",
+      "urls": ["/**/config_cosmos.json"],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "maxSize": 1,
+        "maxAge": "30d",
+        "timeout": "5s"
+      }
+    },
+    {
       "name": "api-excursiones",
       "urls": ["/**/infoexc/info?**", "/**/infoexc/excursiones?**"],
       "cacheConfig": {

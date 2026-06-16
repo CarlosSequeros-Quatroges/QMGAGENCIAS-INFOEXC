@@ -1,11 +1,12 @@
 import { Service, inject } from '@angular/core';
 import { EmpresaService } from './empresa';
-import { environment } from '../../../environments/environment';
+import { ConfigService } from './config';
 
 /** Construye las URLs de las imágenes de excursiones (ficheros estáticos del backend). */
 @Service()
 export class ImagenesService {
   private empresa = inject(EmpresaService);
+  private config = inject(ConfigService);
 
   /**
    * URL del fichero de imagen de una excursión.
@@ -14,6 +15,6 @@ export class ImagenesService {
    */
   urlImagen(codexc: string, nombreFichero: string): string {
     if (!nombreFichero) return '';
-    return `${environment.descargasUrl}/emp${this.empresa.codigo()}/exc${codexc}/${nombreFichero}`;
+    return `${this.config.descargasUrl}/emp${this.empresa.codigo()}/exc${codexc}/${nombreFichero}`;
   }
 }

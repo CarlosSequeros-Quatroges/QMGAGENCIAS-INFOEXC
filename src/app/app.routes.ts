@@ -9,7 +9,7 @@ export const routes: Routes = [
     loadComponent: () => import('./features/error/error').then((m) => m.ErrorComponent),
   },
   {
-    path: ':empresa',
+    path: ':empresa/:codtour',
     canActivate: [empresaGuard],
     children: [
       {

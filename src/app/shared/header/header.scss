@@ -13,6 +13,12 @@
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
 }
 
+.cab-logos {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
 .cab-logo-link {
   display: inline-flex;
   border-radius: 6px;
@@ -28,6 +34,16 @@
   height: 32px;
   width: auto;
   display: block;
+}
+
+// Logo del touroperador, separado del de la empresa por un divisor sutil.
+.cab-logo-tour {
+  height: 28px;
+  width: auto;
+  display: block;
+  margin-left: 0.75rem;
+  padding-left: 0.75rem;
+  border-left: 1px solid #e6e6e6;
 }
 
 .cab-logo-skeleton {

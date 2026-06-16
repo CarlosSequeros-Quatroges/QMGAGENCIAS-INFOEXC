@@ -7,12 +7,13 @@ export const empresaGuard: CanActivateFn = (route) => {
   const empresaService = inject(EmpresaService);
 
   const codigo = route.paramMap.get('empresa') ?? '';
+  const codtour = route.paramMap.get('codtour') ?? '';
 
-  if (!/^\d{3}$/.test(codigo)) {
+  if (!/^\d{3}$/.test(codigo) || !codtour) {
     router.navigate(['/error']);
     return false;
   }
 
-  empresaService.setCodigo(codigo);
+  empresaService.setContexto(codigo, codtour);
   return true;
 };
