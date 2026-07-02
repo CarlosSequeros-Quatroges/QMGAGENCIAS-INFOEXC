@@ -23,12 +23,13 @@
       <!-- El bloque pesado de disponibilidad se carga al entrar en viewport -->
       @defer (on viewport) {
         <section class="detalle-disponibilidad">
-          <h2 class="detalle-subtitulo">{{ i18n.t('detalle.eligeDia') }}</h2>
+          <!--<h2 class="detalle-subtitulo">{{ i18n.t('detalle.eligeDia') }}</h2> -->
           <app-selector-dias
             [diasDisponibles]="exc.diasDisponibles"
             [(fechaSeleccionada)]="fechaSeleccionada"
           />
 
+          <!--
           <h2 class="detalle-subtitulo">{{ i18n.t('detalle.horarios') }}</h2>
           <app-precios-horarios
             [empresa]="empresa()"
@@ -36,11 +37,10 @@
             [codexc]="codexc()"
             [fecha]="fechaSeleccionada()"
           />
-        </section>
+        --></section>
       } @placeholder {
         <div class="detalle-disponibilidad-placeholder"></div>
       }
-
     </div>
   }
 </div>
